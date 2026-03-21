@@ -91,12 +91,15 @@ describe("cardConfigUtils", () => {
         always_show_custom_buttons: false,
         hide_when_off: false,
         hide_when_group_child: false,
+        player_view_icon: "",
         show_volume_step_buttons: false,
         use_volume_up_down_for_step_buttons: false,
         use_experimental_lms_media_browser: false,
+        volume_trailing_button: "power",
       });
       expect(result.grid_options).toBeUndefined();
       expect(result.media_browser).toBeNull();
+      expect(result.volume_trailing_button_custom_button).toBeNull();
     });
 
     it("should preserve existing values when present", () => {
@@ -121,14 +124,21 @@ describe("cardConfigUtils", () => {
         custom_buttons: [
           { icon: "mdi:play", name: "Play", tap_action: { action: "toggle" } },
         ],
+        volume_trailing_button_custom_button: {
+          icon: "mdi:heart",
+          name: "Favorite",
+          tap_action: { action: "toggle" },
+        },
         options: {
           always_show_power_button: true,
           always_show_custom_buttons: true,
           hide_when_group_child: true,
           hide_when_off: true,
+          player_view_icon: "mdi:speaker",
           show_volume_step_buttons: true,
           use_volume_up_down_for_step_buttons: true,
           use_experimental_lms_media_browser: false,
+          volume_trailing_button: "custom",
         },
         grid_options: { columns: "full" },
         media_browser: {
@@ -244,12 +254,15 @@ describe("cardConfigUtils", () => {
       expect(result.custom_buttons).toEqual([]);
       expect(result.options).toEqual({
         always_show_power_button: false,
+        player_view_icon: "",
         show_volume_step_buttons: false,
         use_volume_up_down_for_step_buttons: false,
         use_experimental_lms_media_browser: false,
+        volume_trailing_button: "power",
       });
       expect(result.media_browser).toBeNull();
       expect(result.grid_options).toBeUndefined();
+      expect(result.volume_trailing_button_custom_button).toBeNull();
     });
   });
 

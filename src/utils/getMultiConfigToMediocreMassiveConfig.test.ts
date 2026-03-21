@@ -12,6 +12,7 @@ describe("getMultiConfigToMediocreMassiveConfig", () => {
         speaker_group_entity_id: "media_player.living_room_group",
         can_be_grouped: true,
         ma_entity_id: "ma.living_room",
+        ma_favorite_button_entity_id: "ma_fav.living_room",
         lms_entity_id: "lms.living_room",
         action: { tap_action: { action: "toggle" } },
         search: [
@@ -34,6 +35,15 @@ describe("getMultiConfigToMediocreMassiveConfig", () => {
             },
           },
         ],
+        volume_trailing_button_custom_button: {
+          icon: "mdi:heart",
+          name: "Favorite",
+          tap_action: {
+            action: "perform-action",
+            perform_action: "button.press",
+            target: {},
+          },
+        },
       },
       {
         entity_id: "media_player.kitchen",
@@ -48,9 +58,16 @@ describe("getMultiConfigToMediocreMassiveConfig", () => {
       },
     ],
     use_art_colors: true,
+    ma_favorite_control: {
+      active_color: "#f2c94c",
+      active_icon: "mdi:star",
+      inactive_icon: "mdi:star-outline",
+    },
     options: {
+      player_view_icon: "mdi:speaker",
       show_volume_step_buttons: true,
       use_volume_up_down_for_step_buttons: false,
+      volume_trailing_button: "custom",
     },
     size: "large",
     mode: "panel",
@@ -69,8 +86,14 @@ describe("getMultiConfigToMediocreMassiveConfig", () => {
         entity_id: "media_player.living_room",
         name: "Living Room",
         use_art_colors: true,
+        ma_favorite_control: {
+          active_color: "#f2c94c",
+          active_icon: "mdi:star",
+          inactive_icon: "mdi:star-outline",
+        },
         action: { tap_action: { action: "toggle" } },
         ma_entity_id: "ma.living_room",
+        ma_favorite_button_entity_id: "ma_fav.living_room",
         lms_entity_id: "lms.living_room",
         search: [
           { entity_id: "media_player.living_room", name: "Search Living Room" },
@@ -92,6 +115,15 @@ describe("getMultiConfigToMediocreMassiveConfig", () => {
             },
           },
         ],
+        volume_trailing_button_custom_button: {
+          icon: "mdi:heart",
+          name: "Favorite",
+          tap_action: {
+            action: "perform-action",
+            perform_action: "button.press",
+            target: {},
+          },
+        },
         mode: "panel",
         speaker_group: {
           entity_id: "media_player.living_room_group",
@@ -101,9 +133,11 @@ describe("getMultiConfigToMediocreMassiveConfig", () => {
           ],
         },
         options: {
+          player_view_icon: "mdi:speaker",
           show_volume_step_buttons: true,
           use_volume_up_down_for_step_buttons: false,
           use_experimental_lms_media_browser: false,
+          volume_trailing_button: "custom",
         },
       })
     );

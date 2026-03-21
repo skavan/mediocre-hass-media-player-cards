@@ -18,6 +18,11 @@ describe("getMediocreLegacyConfigToMediocreMultiConfig", () => {
     media_browser: [
       { entity_id: "media_player.living_room", name: "Living Room Browser" },
     ],
+    ma_favorite_control: {
+      active_color: "#f2c94c",
+      active_icon: "mdi:star",
+      inactive_icon: "mdi:star-outline",
+    },
     custom_buttons: [
       {
         icon: "mdi:play",
@@ -29,6 +34,15 @@ describe("getMediocreLegacyConfigToMediocreMultiConfig", () => {
         },
       },
     ],
+    volume_trailing_button_custom_button: {
+      icon: "mdi:heart",
+      name: "Favorite",
+      tap_action: {
+        action: "perform-action",
+        perform_action: "button.press",
+        target: {},
+      },
+    },
     speaker_group: {
       entity_id: "media_player.living_room_group",
       entities: [
@@ -43,6 +57,8 @@ describe("getMediocreLegacyConfigToMediocreMultiConfig", () => {
       always_show_power_button: false,
       hide_when_group_child: false,
       hide_when_off: false,
+      player_view_icon: "mdi:speaker",
+      volume_trailing_button: "custom",
     },
   };
 
@@ -54,6 +70,11 @@ describe("getMediocreLegacyConfigToMediocreMultiConfig", () => {
         use_art_colors: true,
         disable_player_focus_switching: true,
         entity_id: "media_player.living_room",
+        ma_favorite_control: {
+          active_color: "#f2c94c",
+          active_icon: "mdi:star",
+          inactive_icon: "mdi:star-outline",
+        },
         tap_opens_popup: true,
         size: "compact",
         options: expect.objectContaining({
@@ -63,6 +84,8 @@ describe("getMediocreLegacyConfigToMediocreMultiConfig", () => {
           always_show_power_button: false,
           hide_when_group_child: false,
           hide_when_off: false,
+          player_view_icon: "mdi:speaker",
+          volume_trailing_button: "custom",
         }),
         media_players: [
           expect.objectContaining({
@@ -95,6 +118,15 @@ describe("getMediocreLegacyConfigToMediocreMultiConfig", () => {
                 },
               },
             ],
+            volume_trailing_button_custom_button: {
+              icon: "mdi:heart",
+              name: "Favorite",
+              tap_action: {
+                action: "perform-action",
+                perform_action: "button.press",
+                target: {},
+              },
+            },
             can_be_grouped: true,
           }),
           expect.objectContaining({

@@ -29,14 +29,6 @@ views:
                   - media_type: playlist
                     name: Playlists
                     icon: mdi:playlist-music
-            media_browser:
-              enabled: true
-              media_types:
-                - media_type: artists
-                - media_type: albums
-                - media_type: tracks
-                - media_type: playlists
-                - media_type: radios
             can_be_grouped: true
             ma_favorite_button_entity_id: button.ma_basement_favorite_current_song
             custom_buttons:
@@ -52,10 +44,19 @@ views:
             can_be_grouped: true
             search: []
             media_browser: []
-        height: 500px
         use_art_colors: true
         options:
           player_is_active_when: playing_or_paused
+          player_view_icon: mdi:play
+          volume_trailing_button: favorite
+        ma_favorite_control:
+          show_on_artwork: true
+          artwork_button_size: medium
+          artwork_inset_top: "2%"
+          artwork_inset_right: "13%"
+          active_icon: mdi:star
+          inactive_icon: mdi:star-outline
+          active_color: "#f2c94c"
       - type: custom:popup-card
         title: Master Volume Control
         dismissable: true

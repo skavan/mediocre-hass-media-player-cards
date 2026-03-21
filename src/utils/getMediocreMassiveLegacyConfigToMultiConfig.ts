@@ -18,6 +18,12 @@ export const getMediocreMassiveLegacyConfigToMediocreMultiConfig = (
       search: config.search,
       media_browser: config.media_browser,
       custom_buttons: config.custom_buttons,
+      ...(config.volume_trailing_button_custom_button
+        ? {
+            volume_trailing_button_custom_button:
+              config.volume_trailing_button_custom_button,
+          }
+        : {}),
       can_be_grouped: true,
     },
     ...((
@@ -51,6 +57,7 @@ export const getMediocreMassiveLegacyConfigToMediocreMultiConfig = (
     disable_player_focus_switching: true,
     entity_id: config.entity_id,
     media_browser: config.media_browser,
+    ma_favorite_control: config.ma_favorite_control,
     mode: config.mode === "popup" ? "in-card" : config.mode,
     size: "large",
     options: {
@@ -65,6 +72,12 @@ export const getMediocreMassiveLegacyConfigToMediocreMultiConfig = (
         config.mode === "popup",
       use_experimental_lms_media_browser:
         config.options?.use_experimental_lms_media_browser ?? false,
+      ...(config.options?.player_view_icon
+        ? { player_view_icon: config.options.player_view_icon }
+        : {}),
+      ...(config.options?.volume_trailing_button
+        ? { volume_trailing_button: config.options.volume_trailing_button }
+        : {}),
     },
     media_players,
   };

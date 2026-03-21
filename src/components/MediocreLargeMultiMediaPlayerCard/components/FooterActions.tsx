@@ -71,7 +71,7 @@ export const FooterActions = memo<FooterActionsProps>(
         {!desktopMode && (
           <IconButton
             size="small"
-            icon={"mdi:home"}
+            icon={config.options?.player_view_icon ?? "mdi:home"}
             onClick={() => setNavigationRoute("massive")}
             selected={navigationRoute === "massive"}
           />

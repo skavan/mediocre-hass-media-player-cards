@@ -33,10 +33,13 @@ export const getDefaultValuesFromConfig = (
           },
         ]
     : null,
+  ma_favorite_control: config?.ma_favorite_control,
   ma_entity_id: config?.ma_entity_id ?? null,
   ma_favorite_button_entity_id: config?.ma_favorite_button_entity_id ?? null,
   lms_entity_id: config?.lms_entity_id ?? null,
   custom_buttons: config?.custom_buttons ?? [],
+  volume_trailing_button_custom_button:
+    config?.volume_trailing_button_custom_button ?? null,
   options: {
     always_show_power_button:
       config?.options?.always_show_power_button ?? false,
@@ -46,10 +49,12 @@ export const getDefaultValuesFromConfig = (
     hide_when_group_child: config?.options?.hide_when_group_child ?? false,
     show_volume_step_buttons:
       config?.options?.show_volume_step_buttons ?? false,
+    player_view_icon: config?.options?.player_view_icon ?? "",
     use_volume_up_down_for_step_buttons:
       config?.options?.use_volume_up_down_for_step_buttons ?? false,
     use_experimental_lms_media_browser:
       config?.options?.use_experimental_lms_media_browser ?? false,
+    volume_trailing_button: config?.options?.volume_trailing_button ?? "power",
   },
   grid_options: config?.grid_options,
   visibility: config?.visibility,
@@ -83,19 +88,24 @@ export const getDefaultValuesFromMassiveConfig = (
           },
         ]
     : null,
+  ma_favorite_control: config?.ma_favorite_control,
   ma_entity_id: config?.ma_entity_id ?? null,
   ma_favorite_button_entity_id: config?.ma_favorite_button_entity_id ?? null,
   lms_entity_id: config?.lms_entity_id ?? null,
   custom_buttons: config?.custom_buttons ?? [],
+  volume_trailing_button_custom_button:
+    config?.volume_trailing_button_custom_button ?? null,
   options: {
     always_show_power_button:
       config?.options?.always_show_power_button ?? false,
+    player_view_icon: config?.options?.player_view_icon ?? "",
     show_volume_step_buttons:
       config?.options?.show_volume_step_buttons ?? false,
     use_volume_up_down_for_step_buttons:
       config?.options?.use_volume_up_down_for_step_buttons ?? false,
     use_experimental_lms_media_browser:
       config?.options?.use_experimental_lms_media_browser ?? false,
+    volume_trailing_button: config?.options?.volume_trailing_button ?? "power",
   },
   grid_options: config?.grid_options,
   visibility: config?.visibility,
@@ -117,6 +127,7 @@ export const getSimpleConfigFromFormValues = (
   if (!config.action || Object.keys(config.action).length === 0)
     delete config.action;
   if (!config.ma_entity_id) delete config.ma_entity_id;
+  if (!config.ma_favorite_control) delete config.ma_favorite_control;
 
   // Only preserve ma_favorite_button_entity_id if it is a non-empty string
   if (!config.ma_favorite_button_entity_id) {
@@ -126,6 +137,9 @@ export const getSimpleConfigFromFormValues = (
   if (!config.lms_entity_id) delete config.lms_entity_id;
   if (!config.custom_buttons || config.custom_buttons.length === 0)
     delete config.custom_buttons;
+  if (!config.volume_trailing_button_custom_button) {
+    delete config.volume_trailing_button_custom_button;
+  }
 
   if (config.speaker_group?.entity_id === null) {
     delete config.speaker_group.entity_id;
@@ -156,11 +170,20 @@ export const getSimpleConfigFromFormValues = (
   if (config.options?.show_volume_step_buttons === false) {
     delete config.options.show_volume_step_buttons;
   }
+  if (!config.options?.player_view_icon) {
+    delete config.options?.player_view_icon;
+  }
   if (config.options?.use_volume_up_down_for_step_buttons === false) {
     delete config.options.use_volume_up_down_for_step_buttons;
   }
   if (config.options?.use_experimental_lms_media_browser === false) {
     delete config.options.use_experimental_lms_media_browser;
+  }
+  if (
+    !config.options?.volume_trailing_button ||
+    config.options.volume_trailing_button === "power"
+  ) {
+    delete config.options?.volume_trailing_button;
   }
 
   if (Object.keys(config.options ?? {}).length === 0) {
@@ -193,6 +216,7 @@ export const getSimpleConfigFromMassiveFormValues = (
   if (!config.action || Object.keys(config.action).length === 0)
     delete config.action;
   if (!config.ma_entity_id) delete config.ma_entity_id;
+  if (!config.ma_favorite_control) delete config.ma_favorite_control;
 
   // Only preserve ma_favorite_button_entity_id if it is a non-empty string
   if (!config.ma_favorite_button_entity_id) {
@@ -202,6 +226,9 @@ export const getSimpleConfigFromMassiveFormValues = (
   if (!config.lms_entity_id) delete config.lms_entity_id;
   if (!config.custom_buttons || config.custom_buttons.length === 0)
     delete config.custom_buttons;
+  if (!config.volume_trailing_button_custom_button) {
+    delete config.volume_trailing_button_custom_button;
+  }
 
   if (config.speaker_group?.entity_id === null) {
     delete config.speaker_group.entity_id;
@@ -219,6 +246,9 @@ export const getSimpleConfigFromMassiveFormValues = (
   if (config.options?.always_show_power_button === false) {
     delete config.options.always_show_power_button;
   }
+  if (!config.options?.player_view_icon) {
+    delete config.options?.player_view_icon;
+  }
   if (config.options?.show_volume_step_buttons === false) {
     delete config.options.show_volume_step_buttons;
   }
@@ -227,6 +257,12 @@ export const getSimpleConfigFromMassiveFormValues = (
   }
   if (config.options?.use_experimental_lms_media_browser === false) {
     delete config.options.use_experimental_lms_media_browser;
+  }
+  if (
+    !config.options?.volume_trailing_button ||
+    config.options.volume_trailing_button === "power"
+  ) {
+    delete config.options?.volume_trailing_button;
   }
 
   if (Object.keys(config.options ?? {}).length === 0) {

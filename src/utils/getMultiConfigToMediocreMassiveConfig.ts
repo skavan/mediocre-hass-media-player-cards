@@ -31,12 +31,25 @@ export const getMultiConfigToMediocreMassiveConfig = (
     entity_id: resolvedSelectedPlayer.entity_id,
     name: resolvedSelectedPlayer.name,
     use_art_colors: config.use_art_colors,
+    ma_favorite_control: config.ma_favorite_control,
     action: resolvedSelectedPlayer.action,
     ma_entity_id: resolvedSelectedPlayer.ma_entity_id,
+    ...(resolvedSelectedPlayer.ma_favorite_button_entity_id
+      ? {
+          ma_favorite_button_entity_id:
+            resolvedSelectedPlayer.ma_favorite_button_entity_id,
+        }
+      : {}),
     lms_entity_id: resolvedSelectedPlayer.lms_entity_id,
     search: resolvedSelectedPlayer.search,
     media_browser: resolvedSelectedPlayer.media_browser,
     custom_buttons: resolvedSelectedPlayer.custom_buttons,
+    ...(resolvedSelectedPlayer.volume_trailing_button_custom_button
+      ? {
+          volume_trailing_button_custom_button:
+            resolvedSelectedPlayer.volume_trailing_button_custom_button,
+        }
+      : {}),
     mode: mode,
     speaker_group:
       speaker_group.entities.length > 1 ? speaker_group : undefined,
@@ -47,6 +60,12 @@ export const getMultiConfigToMediocreMassiveConfig = (
         config.options?.use_volume_up_down_for_step_buttons ?? false,
       use_experimental_lms_media_browser:
         config.options?.use_experimental_lms_media_browser ?? false,
+      ...(config.options?.player_view_icon
+        ? { player_view_icon: config.options.player_view_icon }
+        : {}),
+      ...(config.options?.volume_trailing_button
+        ? { volume_trailing_button: config.options.volume_trailing_button }
+        : {}),
     },
   };
 };
