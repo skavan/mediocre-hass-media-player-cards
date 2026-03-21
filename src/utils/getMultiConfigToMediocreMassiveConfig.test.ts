@@ -176,4 +176,32 @@ describe("getMultiConfigToMediocreMassiveConfig", () => {
       use_experimental_lms_media_browser: false,
     });
   });
+
+  it("should fall back to root media_browser when the selected player does not define one", () => {
+    const config: MediocreMultiMediaPlayerCardConfig = {
+      ...baseConfig,
+      media_browser: [
+        {
+          entity_id: "media_player.shared_browser",
+          name: "Shared Browser",
+          media_types: [{ media_type: "artists" }, { media_type: "albums" }],
+        },
+      ],
+      media_players: [
+        {
+          entity_id: "media_player.kitchen",
+          name: "Kitchen",
+          can_be_grouped: true,
+        },
+      ],
+    };
+
+    const result = getMultiConfigToMediocreMassiveConfig(
+      config,
+      config.media_players[0],
+      "panel"
+    );
+
+    expect(result.media_browser).toEqual(config.media_browser);
+  });
 });

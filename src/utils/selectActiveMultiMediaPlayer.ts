@@ -14,16 +14,21 @@ export function selectActiveMultiMediaPlayer(
   config: MediocreMultiMediaPlayerCardConfig,
   selectedMediaPlayer?: MediocreMultiMediaPlayer
 ): MediocreMultiMediaPlayer | undefined {
+  const getConfiguredPlayer = (entityId?: string) =>
+    entityId
+      ? config.media_players.find(player => player.entity_id === entityId)
+      : undefined;
+
   if (config.disable_player_focus_switching) {
     return (
-      selectedMediaPlayer ??
-      config.media_players.find(player => player.entity_id === config.entity_id)
+      getConfiguredPlayer(selectedMediaPlayer?.entity_id) ??
+      getConfiguredPlayer(config.entity_id)
     );
   }
 
   let player =
-    selectedMediaPlayer ??
-    config.media_players.find(player => player.entity_id === config.entity_id);
+    getConfiguredPlayer(selectedMediaPlayer?.entity_id) ??
+    getConfiguredPlayer(config.entity_id);
 
   const playerState = hass.states[player?.entity_id ?? config.entity_id]?.state;
   if (

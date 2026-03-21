@@ -7,6 +7,8 @@
     "dev": "vite build --mode development",
     "dev:watch": "vite build --watch --mode development",
     "build": "vite build",
+    "gzip:dist": "node scripts/gzip-dist.mjs",
+    "build:ha": "vite build && node scripts/gzip-dist.mjs",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --ignore-pattern \"**/*.test.ts\"",
     "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix --ignore-pattern \"**/*.test.ts\"",

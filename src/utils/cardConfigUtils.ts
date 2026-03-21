@@ -24,7 +24,14 @@ export const getDefaultValuesFromConfig = (
   media_browser: config?.media_browser
     ? Array.isArray(config.media_browser)
       ? config.media_browser
-      : [{ entity_id: config.media_browser.entity_id ?? config.entity_id }]
+      : [
+          {
+            entity_id: config.media_browser.entity_id ?? config.entity_id,
+            ...(config.media_browser.media_types
+              ? { media_types: config.media_browser.media_types }
+              : {}),
+          },
+        ]
     : null,
   ma_entity_id: config?.ma_entity_id ?? null,
   ma_favorite_button_entity_id: config?.ma_favorite_button_entity_id ?? null,
@@ -67,7 +74,14 @@ export const getDefaultValuesFromMassiveConfig = (
   media_browser: config?.media_browser
     ? Array.isArray(config.media_browser)
       ? config.media_browser
-      : [{ entity_id: config.media_browser.entity_id ?? config.entity_id }]
+      : [
+          {
+            entity_id: config.media_browser.entity_id ?? config.entity_id,
+            ...(config.media_browser.media_types
+              ? { media_types: config.media_browser.media_types }
+              : {}),
+          },
+        ]
     : null,
   ma_entity_id: config?.ma_entity_id ?? null,
   ma_favorite_button_entity_id: config?.ma_favorite_button_entity_id ?? null,

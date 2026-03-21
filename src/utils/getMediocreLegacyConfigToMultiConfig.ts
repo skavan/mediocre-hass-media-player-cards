@@ -50,6 +50,7 @@ export const getMediocreLegacyConfigToMediocreMultiConfig = (
     use_art_colors: config.use_art_colors ?? false,
     disable_player_focus_switching: true,
     entity_id: config.entity_id,
+    media_browser: config.media_browser,
     tap_opens_popup: config.tap_opens_popup ?? false,
     size: "compact",
     options: {

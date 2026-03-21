@@ -8,7 +8,7 @@ const commonMediocreMediaPlayerCardConfigOptionsSchema = type({
   "use_experimental_lms_media_browser?": "boolean", // Use the experimental LMS media browser instead of the default one when an LMS entity is used and lyrion_cli integration is present.
 });
 
-const searchMediaTypeSchema = type({
+const mediaTypeConfigSchema = type({
   "icon?": "string",
   "name?": "string",
   media_type: "string",
@@ -24,10 +24,12 @@ export const mediaPlayerConfigEntityArray = mediaPlayerConfigEntity.array();
 const mediaBrowserEntry = type({
   "name?": "string | null",
   entity_id: type("string"),
+  "media_types?": mediaTypeConfigSchema.array().or("undefined"),
 });
 const mediaBrowserLegacyEntry = type({
   "enabled?": "boolean | null", // Enables media browser functionality
   "entity_id?": type("string").or("null").or("undefined"), // entity_id of the media browser to use (optional will fall back to the entity_id of the card)
+  "media_types?": mediaTypeConfigSchema.array().or("undefined"),
 });
 
 const mediaBrowser = type("null")
@@ -45,13 +47,13 @@ const searchLegacyEntry = type({
   "enabled?": "boolean | null", // Enables regular Home Assistant search_media functionality
   "show_favorites?": type("boolean | null").or("undefined"), // Shows favorites no search query has been entered
   "entity_id?": type("string").or("null").or("undefined"), // entity_id of the media player to search on (optional will fall back to the entity_id of the card)
-  "media_types?": searchMediaTypeSchema.array(),
+  "media_types?": mediaTypeConfigSchema.array(),
 });
 
 const searchEntry = type({
   "name?": "string | null",
   entity_id: type("string"),
-  "media_types?": searchMediaTypeSchema.array().or("undefined"),
+  "media_types?": mediaTypeConfigSchema.array().or("undefined"),
 });
 
 const searchConfig = searchEntry.array().or(searchLegacyEntry).or("undefined");
@@ -117,6 +119,7 @@ export const commonMediaPlayerCardSchema = type({
   type: "string",
   entity_id: "string", // entity id of the initially selected media player (used when player is active)
   media_players: MediocreMultiMediaPlayer.array(),
+  "media_browser?": mediaBrowser,
   "use_art_colors?": "boolean",
   "disable_player_focus_switching?": "boolean",
   "grid_options?": "unknown", // Home Assistant grid layout options (passed through without validation)
@@ -149,7 +152,8 @@ export const MediocreMultiMediaPlayerCardConfigSchema =
     )
   );
 
-export type SearchMediaType = typeof searchMediaTypeSchema.infer;
+export type SearchMediaType = typeof mediaTypeConfigSchema.infer;
+export type MediaBrowserMediaType = typeof mediaTypeConfigSchema.infer;
 export type CommonMediocreMediaPlayerCardConfig =
   typeof commonMediocreMediaPlayerCardConfigSchema.infer;
 export type MediocreMediaPlayerCardConfig =

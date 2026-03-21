@@ -50,6 +50,7 @@ export const getMediocreMassiveLegacyConfigToMediocreMultiConfig = (
     use_art_colors: config.use_art_colors ?? false,
     disable_player_focus_switching: true,
     entity_id: config.entity_id,
+    media_browser: config.media_browser,
     mode: config.mode === "popup" ? "in-card" : config.mode,
     size: "large",
     options: {

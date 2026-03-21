@@ -22,7 +22,11 @@ import { css } from "@emotion/react";
 import { getHass } from "@utils";
 import { useCallback, useEffect, useMemo, useState } from "preact/hooks";
 import { Fragment } from "preact/jsx-runtime";
-import { getEnqueueModeIcon, getItemMdiIcon } from "./utils";
+import {
+  filterMediaBrowserRootItems,
+  getEnqueueModeIcon,
+  getItemMdiIcon,
+} from "./utils";
 import { useIntl } from "@components/i18n";
 import { MediaBrowserEntry } from "@types";
 
@@ -104,6 +108,7 @@ export type HaMediaBrowserItem = {
   can_play: boolean;
   can_expand: boolean;
   thumbnail: string | null;
+  icon?: string | null;
 };
 
 export const HaMediaBrowser = ({
@@ -129,6 +134,13 @@ export const HaMediaBrowser = ({
     items,
     hasNoArtwork,
   }: { items: HaMediaBrowserItem[][]; hasNoArtwork: boolean } = useMemo(() => {
+    const displayItems =
+      history.length === 0
+        ? filterMediaBrowserRootItems(
+            mediaBrowserItems,
+            selectedMediaBrowser.media_types
+          )
+        : mediaBrowserItems;
     let hasNoArtwork = true;
     const result: HaMediaBrowserItem[][] = [];
     const groupedByType: Record<"track" | "expandable", HaMediaBrowserItem[]> =
@@ -139,8 +151,8 @@ export const HaMediaBrowser = ({
 
     const filteredResults =
       itemFilter === ""
-        ? mediaBrowserItems
-        : mediaBrowserItems.filter(item =>
+        ? displayItems
+        : displayItems.filter(item =>
             item.title.toLowerCase().includes(itemFilter.toLowerCase())
           );
 
@@ -178,7 +190,13 @@ export const HaMediaBrowser = ({
     });
 
     return { items: result, hasNoArtwork };
-  }, [mediaBrowserItems, chunkSize, itemFilter, history.length]);
+  }, [
+    mediaBrowserItems,
+    chunkSize,
+    itemFilter,
+    history.length,
+    selectedMediaBrowser.media_types,
+  ]);
 
   useEffect(() => {
     setItemFilter("");
@@ -538,7 +556,7 @@ export const HaMediaBrowser = ({
         )}
         renderEmpty={() => {
           if (isFetching) return <Spinner />;
-          if (!isFetching && mediaBrowserItems.length === 0) {
+          if (!isFetching && items.length === 0) {
             return (
               <div css={styles.noMediaText}>
                 {t({

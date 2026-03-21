@@ -138,4 +138,32 @@ describe("selectActiveMultiMediaPlayer", () => {
       "media_player.a"
     );
   });
+
+  it("returns the current config version of the selected player", () => {
+    const selectedPlayer = basePlayer("media_player.a", {
+      media_browser: [],
+    });
+    const config: MediocreMultiMediaPlayerCardConfig = {
+      type: "multi",
+      size: "large",
+      mode: "card",
+      entity_id: "media_player.a",
+      media_players: [
+        basePlayer("media_player.a"),
+        basePlayer("media_player.b"),
+      ],
+    };
+    const hass = makeHass({
+      "media_player.a": baseState(
+        "playing",
+        ["media_player.a"],
+        "media_player.a"
+      ),
+      "media_player.b": baseState("idle", ["media_player.b"], "media_player.b"),
+    });
+
+    expect(selectActiveMultiMediaPlayer(hass, config, selectedPlayer)).toEqual(
+      config.media_players[0]
+    );
+  });
 });

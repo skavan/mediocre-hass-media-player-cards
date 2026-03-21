@@ -20,6 +20,7 @@ export * from "./getMediaBrowserEntryArray";
 export * from "./getMediaPlayerTitleAndSubtitle";
 export * from "./getMediocreLegacyConfigToMultiConfig";
 export * from "./getMultiConfigToMediocreMassiveConfig";
+export * from "./getResolvedMultiMediaPlayer";
 export * from "./getSearchEntryArray";
 export * from "./getSourceIcon";
 export * from "./getVolumeIcon";

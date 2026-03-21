@@ -1,0 +1,76 @@
+views:
+  - type: custom:vertical-layout
+    cards:
+      - type: custom:mediocre-multi-media-player-card
+        entity_id: media_player.ma_basement_sonos
+        ma_entity_id: media_player.ma_basement_sonos
+        ma_favorite_button_entity_id: button.ma_basement_favorite_current_song
+        tap_opens_popup: true
+        mode: card
+        size: large
+        media_browser:
+          enabled: true
+          media_types:
+            - media_type: artists
+            - media_type: albums
+            - media_type: tracks
+            - media_type: playlists
+            - media_type: radios
+        media_players:
+          - entity_id: media_player.ma_basement_sonos
+            ma_entity_id: media_player.ma_basement_sonos
+            search:
+              - entity_id: media_player.ma_basement_sonos
+                name: MA Basement Sonos
+                media_types:
+                  - media_type: music
+                    name: Music
+                    icon: mdi:music
+                  - media_type: playlist
+                    name: Playlists
+                    icon: mdi:playlist-music
+            media_browser:
+              enabled: true
+              media_types:
+                - media_type: artists
+                - media_type: albums
+                - media_type: tracks
+                - media_type: playlists
+                - media_type: radios
+            can_be_grouped: true
+            ma_favorite_button_entity_id: button.ma_basement_favorite_current_song
+            custom_buttons:
+              - icon: mdi:volume-high
+                name: Master Volume
+                tap_action:
+                  action: fire-dom-event
+                  browser_mod:
+                    service: browser_mod.popup
+                    data:
+                      popup_card_id: porch_volume_popup
+          - entity_id: media_player.ma_dining_sl
+            can_be_grouped: true
+            search: []
+            media_browser: []
+        height: 500px
+        use_art_colors: true
+        options:
+          player_is_active_when: playing_or_paused
+      - type: custom:popup-card
+        title: Master Volume Control
+        dismissable: true
+        popup_card_id: porch_volume_popup
+        icon: mdi:volume-source
+        icon_title: Pioneer
+        initial_style: normal
+        card:
+          type: vertical-stack
+          cards:
+            - type: custom:mushroom-media-player-card
+              entity: media_player.sc_lx704
+              volume_controls:
+                - volume_set
+              layout: horizontal
+              icon_type: none
+              show_volume_level: true
+              use_media_info: false

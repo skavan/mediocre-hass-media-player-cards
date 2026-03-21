@@ -72,9 +72,28 @@ export const MediocreMultiMediaPlayerCardEditor: FC<
         media_browser: mp?.media_browser
           ? Array.isArray(mp.media_browser)
             ? mp.media_browser
-            : [{ entity_id: mp.media_browser.entity_id ?? mp.entity_id }]
+            : [
+                {
+                  entity_id: mp.media_browser.entity_id ?? mp.entity_id,
+                  ...(mp.media_browser.media_types
+                    ? { media_types: mp.media_browser.media_types }
+                    : {}),
+                },
+              ]
           : [],
       }));
+      const mediaBrowser = config.media_browser
+        ? Array.isArray(config.media_browser)
+          ? config.media_browser
+          : [
+              {
+                entity_id: config.media_browser.entity_id ?? config.entity_id,
+                ...(config.media_browser.media_types
+                  ? { media_types: config.media_browser.media_types }
+                  : {}),
+              },
+            ]
+        : undefined;
 
       const isLarge = config.size === "large" || !config.size;
       if (isLarge) {
@@ -84,6 +103,7 @@ export const MediocreMultiMediaPlayerCardEditor: FC<
         return {
           ...largeConfig,
           size: "large",
+          media_browser: mediaBrowser,
           media_players: mediaPlayers,
         };
       }
@@ -91,6 +111,7 @@ export const MediocreMultiMediaPlayerCardEditor: FC<
       return {
         ...config,
         size: "compact",
+        media_browser: mediaBrowser,
         media_players: mediaPlayers,
       };
     },
