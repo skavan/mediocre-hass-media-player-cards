@@ -26,7 +26,7 @@ views:
                   - media_type: music
                     name: Music
                     icon: mdi:music
-                  - media_type: playlist
+                  - media_type: playlists
                     name: Playlists
                     icon: mdi:playlist-music
             can_be_grouped: true
@@ -52,11 +52,11 @@ views:
         ma_favorite_control:
           show_on_artwork: true
           artwork_button_size: medium
-          artwork_inset_top: "2%"
-          artwork_inset_right: "13%"
+          artwork_inset_top: 5%
+          artwork_inset_right: 6%
           active_icon: mdi:star
           inactive_icon: mdi:star-outline
-          active_color: "#f2c94c"
+          active_color: '#f2c94c'
       - type: custom:popup-card
         title: Master Volume Control
         dismissable: true
