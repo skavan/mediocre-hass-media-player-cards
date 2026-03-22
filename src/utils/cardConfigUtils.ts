@@ -49,6 +49,9 @@ export const getDefaultValuesFromConfig = (
     hide_when_group_child: config?.options?.hide_when_group_child ?? false,
     show_volume_step_buttons:
       config?.options?.show_volume_step_buttons ?? false,
+    always_show_footer_more_actions:
+      config?.options?.always_show_footer_more_actions ?? false,
+    media_browser_view_icon: config?.options?.media_browser_view_icon ?? "",
     player_view_icon: config?.options?.player_view_icon ?? "",
     use_volume_up_down_for_step_buttons:
       config?.options?.use_volume_up_down_for_step_buttons ?? false,
@@ -98,6 +101,9 @@ export const getDefaultValuesFromMassiveConfig = (
   options: {
     always_show_power_button:
       config?.options?.always_show_power_button ?? false,
+    always_show_footer_more_actions:
+      config?.options?.always_show_footer_more_actions ?? false,
+    media_browser_view_icon: config?.options?.media_browser_view_icon ?? "",
     player_view_icon: config?.options?.player_view_icon ?? "",
     show_volume_step_buttons:
       config?.options?.show_volume_step_buttons ?? false,
@@ -169,6 +175,12 @@ export const getSimpleConfigFromFormValues = (
 
   if (config.options?.show_volume_step_buttons === false) {
     delete config.options.show_volume_step_buttons;
+  }
+  if (config.options?.always_show_footer_more_actions === false) {
+    delete config.options.always_show_footer_more_actions;
+  }
+  if (!config.options?.media_browser_view_icon) {
+    delete config.options?.media_browser_view_icon;
   }
   if (!config.options?.player_view_icon) {
     delete config.options?.player_view_icon;
@@ -248,6 +260,12 @@ export const getSimpleConfigFromMassiveFormValues = (
   }
   if (!config.options?.player_view_icon) {
     delete config.options?.player_view_icon;
+  }
+  if (config.options?.always_show_footer_more_actions === false) {
+    delete config.options.always_show_footer_more_actions;
+  }
+  if (!config.options?.media_browser_view_icon) {
+    delete config.options?.media_browser_view_icon;
   }
   if (config.options?.show_volume_step_buttons === false) {
     delete config.options.show_volume_step_buttons;

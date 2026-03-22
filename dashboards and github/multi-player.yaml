@@ -23,23 +23,29 @@ views:
               - entity_id: media_player.ma_basement_sonos
                 name: MA Basement Sonos
                 media_types:
-                  - media_type: music
-                    name: Music
-                    icon: mdi:music
                   - media_type: playlists
                     name: Playlists
                     icon: mdi:playlist-music
+                  - media_type: artists
+                    name: Artists
+                    icon: mdi:account-music
+                  - media_type: albums
+                    name: Albums
+                    icon: mdi:album
+                  - media_type: tracks
+                    name: Tracks
+                    icon: mdi:music-note
             can_be_grouped: true
             ma_favorite_button_entity_id: button.ma_basement_favorite_current_song
-            custom_buttons:
-              - icon: mdi:volume-high
-                name: Master Volume
-                tap_action:
-                  action: fire-dom-event
-                  browser_mod:
-                    service: browser_mod.popup
-                    data:
-                      popup_card_id: porch_volume_popup
+            volume_trailing_button_custom_button:
+              icon: mdi:volume-source
+              name: Master Volumes
+              tap_action:
+                action: fire-dom-event
+                browser_mod:
+                  service: browser_mod.popup
+                  data:
+                    popup_card_id: porch_volume_popup
           - entity_id: media_player.ma_dining_sl
             can_be_grouped: true
             search: []
@@ -48,7 +54,7 @@ views:
         options:
           player_is_active_when: playing_or_paused
           player_view_icon: mdi:play
-          volume_trailing_button: favorite
+          volume_trailing_button: custom
         ma_favorite_control:
           show_on_artwork: true
           artwork_button_size: medium
@@ -68,6 +74,16 @@ views:
           type: vertical-stack
           cards:
             - type: custom:mushroom-media-player-card
+              entity: media_player.ma_basement_sonos
+              volume_controls:
+                - volume_set
+              primary_info: name
+              icon_type: none
+              secondary_info: state
+              show_volume_level: true
+              layout: horizontal
+              use_media_info: false
+            - type: custom:mushroom-media-player-card
               entity: media_player.sc_lx704
               volume_controls:
                 - volume_set
@@ -75,3 +91,4 @@ views:
               icon_type: none
               show_volume_level: true
               use_media_info: false
+              name: Master Volume (Receiver)

@@ -93,7 +93,46 @@ options:
   player_view_icon: mdi:play
 ```
 
-## 4. Large Card Volume Trailing Button
+## 4. Large Card Media Browser Icon
+
+The media browser footer/tab icon on the large player can now be customized.
+
+Option:
+
+- `options.media_browser_view_icon`
+
+Default:
+
+- `mdi:folder-music`
+
+Example:
+
+```yaml
+options:
+  media_browser_view_icon: mdi:folder-star
+```
+
+## 5. Footer More-Actions Button
+
+The large footer `...` button now behaves like this:
+
+- by default it only shows when multiple `custom_buttons` are defined
+- if exactly one `custom_button` is defined, that button is shown directly
+- it no longer appears just because a player has MA features
+- you can force it to show for access to the additional-actions view
+
+Option:
+
+- `options.always_show_footer_more_actions`
+
+Example:
+
+```yaml
+options:
+  always_show_footer_more_actions: true
+```
+
+## 6. Large Card Volume Trailing Button
 
 The large player view now supports a configurable button to the right of the volume slider.
 
@@ -138,7 +177,7 @@ media_players:
           entity_id: button.ma_basement_favorite_current_song
 ```
 
-## 5. Music Assistant Favorite Control
+## 7. Music Assistant Favorite Control
 
 A reusable Music Assistant favorite control is now available.
 
@@ -180,7 +219,7 @@ ma_favorite_control:
   active_color: "#f2c94c"
 ```
 
-## 6. Artwork Favorite Overlay
+## 8. Artwork Favorite Overlay
 
 The Music Assistant favorite control can be shown on the main artwork.
 
@@ -216,7 +255,7 @@ ma_favorite_control:
   active_color: "#f2c94c"
 ```
 
-## 7. Music Assistant Search Configuration
+## 9. Music Assistant Search Configuration
 
 If a search entry targets the player's `ma_entity_id`, it is now treated as a configurable Music Assistant search provider.
 
@@ -275,7 +314,7 @@ With the example above:
 - `Playlists` shows favorite playlists
 - typed search under `Music` searches artist, album, and track in MA
 
-## 8. Build Helpers
+## 10. Build Helpers
 
 Added package scripts:
 
@@ -293,7 +332,7 @@ This produces:
 - `dist/mediocre-hass-media-player-cards.js`
 - `dist/mediocre-hass-media-player-cards.js.gz`
 
-## 9. Combined Example
+## 11. Combined Example
 
 ```yaml
 type: custom:mediocre-multi-media-player-card
@@ -312,6 +351,8 @@ media_browser:
     - media_type: radios
 
 options:
+  always_show_footer_more_actions: true
+  media_browser_view_icon: mdi:folder-star
   player_view_icon: mdi:play
   volume_trailing_button: ma_favorite
 
@@ -343,7 +384,7 @@ media_players:
     search: []
 ```
 
-## 10. Current Limitations
+## 12. Current Limitations
 
 - Home Assistant media browser root filtering only affects the first/root Browse Media screen
 - Music Assistant unfavorite currently depends on `mass_queue.unfavorite_current_item`, which is limited for some provider-backed items

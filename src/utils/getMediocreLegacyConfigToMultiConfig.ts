@@ -73,6 +73,15 @@ export const getMediocreLegacyConfigToMediocreMultiConfig = (
       hide_when_off: config.options?.hide_when_off ?? false,
       use_experimental_lms_media_browser:
         config.options?.use_experimental_lms_media_browser ?? false,
+      ...(config.options?.always_show_footer_more_actions
+        ? {
+            always_show_footer_more_actions:
+              config.options.always_show_footer_more_actions,
+          }
+        : {}),
+      ...(config.options?.media_browser_view_icon
+        ? { media_browser_view_icon: config.options.media_browser_view_icon }
+        : {}),
       ...(config.options?.player_view_icon
         ? { player_view_icon: config.options.player_view_icon }
         : {}),

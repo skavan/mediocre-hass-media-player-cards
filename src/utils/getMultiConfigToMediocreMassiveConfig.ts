@@ -60,6 +60,15 @@ export const getMultiConfigToMediocreMassiveConfig = (
         config.options?.use_volume_up_down_for_step_buttons ?? false,
       use_experimental_lms_media_browser:
         config.options?.use_experimental_lms_media_browser ?? false,
+      ...(config.options?.always_show_footer_more_actions
+        ? {
+            always_show_footer_more_actions:
+              config.options.always_show_footer_more_actions,
+          }
+        : {}),
+      ...(config.options?.media_browser_view_icon
+        ? { media_browser_view_icon: config.options.media_browser_view_icon }
+        : {}),
       ...(config.options?.player_view_icon
         ? { player_view_icon: config.options.player_view_icon }
         : {}),
