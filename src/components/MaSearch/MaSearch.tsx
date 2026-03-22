@@ -37,9 +37,11 @@ export const MaSearch = ({
   const { t } = useIntl();
   const [query, setQuery] = useState("");
   const [enqueueMode, setEnqueueMode] = useState<MaEnqueueMode>("play");
-  const debouncedQuery = useDebounce(query, 600);
+  const normalizedQuery = query.trim();
+  const debouncedQuery = useDebounce(normalizedQuery, 600);
   const [activeFilter, setActiveFilter] = useState<MaFilterType>("all");
   const resolvedFilters = useMemo(() => getMaFilterConfig(filterConfig), [filterConfig]);
+  const isShowingFavorites = normalizedQuery === "";
 
   useEffect(() => {
     if (resolvedFilters.some(filter => filter.type === activeFilter)) return;
@@ -51,7 +53,7 @@ export const MaSearch = ({
     activeFilter
   );
 
-  const { favorites } = useFavorites(activeFilter, query === "");
+  const { favorites } = useFavorites(activeFilter, isShowingFavorites);
 
   const renderSearchBar = () => {
     return (
@@ -136,6 +138,16 @@ export const MaSearch = ({
             )}
           />
         </div>
+        <div css={searchStyles.modeText}>
+          {t({
+            id: isShowingFavorites
+              ? "Search.mode.showing_favorites"
+              : "Search.mode.showing_results",
+            defaultMessage: isShowingFavorites
+              ? "Showing favorites"
+              : "Showing results",
+          })}
+        </div>
         <div css={searchStyles.filterContainer}>{renderFilterChips()}</div>
       </div>
     );
@@ -169,11 +181,11 @@ export const MaSearch = ({
         "--mmpc-search-padding": `${horizontalPadding}px`,
       }}
     >
-      <MaMediaItemsList
-        renderHeader={searchBarPosition === "top" ? renderSearchBar : undefined}
-        results={
-          query !== "" && results ? results : favorites ? favorites : undefined
-        }
+        <MaMediaItemsList
+          renderHeader={searchBarPosition === "top" ? renderSearchBar : undefined}
+          results={
+          !isShowingFavorites && results ? results : favorites ? favorites : undefined
+          }
         onItemClick={item => playItem(item, maEntityId, enqueueMode)}
         style={{
           "--mmpc-search-padding": `${horizontalPadding}px`,

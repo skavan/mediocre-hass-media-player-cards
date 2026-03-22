@@ -59,4 +59,11 @@ export const searchStyles = {
   input: css({
     flexGrow: 1,
   }),
+  modeText: css({
+    color: theme.colors.onCard,
+    opacity: 0.72,
+    fontSize: "12px",
+    lineHeight: 1.3,
+    padding: "0px var(--mmpc-search-padding, 0px)",
+  }),
 };
