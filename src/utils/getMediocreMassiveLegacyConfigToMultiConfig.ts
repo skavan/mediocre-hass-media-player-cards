@@ -17,6 +17,7 @@ export const getMediocreMassiveLegacyConfigToMediocreMultiConfig = (
       lms_entity_id: config.lms_entity_id,
       search: config.search,
       media_browser: config.media_browser,
+      volume_panel: config.volume_panel,
       custom_buttons: config.custom_buttons,
       ...(config.volume_trailing_button_custom_button
         ? {
@@ -76,6 +77,12 @@ export const getMediocreMassiveLegacyConfigToMediocreMultiConfig = (
         ? {
             always_show_footer_more_actions:
               config.options.always_show_footer_more_actions,
+          }
+        : {}),
+      ...(config.options?.hide_mini_player_on_secondary_views
+        ? {
+            hide_mini_player_on_secondary_views:
+              config.options.hide_mini_player_on_secondary_views,
           }
         : {}),
       ...(config.options?.media_browser_view_icon

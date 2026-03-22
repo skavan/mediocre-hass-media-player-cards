@@ -8,6 +8,7 @@ It covers:
 - root-level multi-card inheritance for `media_browser`
 - configurable large-card player tab icon
 - configurable large-card trailing volume button
+- native grouped volume panel opened from custom buttons
 - reusable Music Assistant favorite control
 - Music Assistant artwork favorite overlay
 - Music Assistant search filter configuration and favorites
@@ -124,12 +125,14 @@ The large footer `...` button now behaves like this:
 Option:
 
 - `options.always_show_footer_more_actions`
+- `options.hide_mini_player_on_secondary_views`
 
 Example:
 
 ```yaml
 options:
   always_show_footer_more_actions: true
+  hide_mini_player_on_secondary_views: true
 ```
 
 ## 6. Large Card Volume Trailing Button
@@ -144,6 +147,7 @@ Supported values:
 
 - `power`
 - `ma_favorite`
+- `group_volume`
 - `custom`
 - `none`
 
@@ -177,7 +181,99 @@ media_players:
           entity_id: button.ma_basement_favorite_current_song
 ```
 
-## 7. Music Assistant Favorite Control
+### Built-in grouped volume trailing button
+
+To open the native grouped volume panel from the trailing volume-row button instead of from a custom button:
+
+```yaml
+options:
+  volume_trailing_button: group_volume
+```
+
+Behavior:
+
+- uses a built-in `mdi:volume-source` button on the right side of the large volume row
+- opens the same native grouped volume panel as the custom `mmpc-action`
+- keeps the custom-button launch path available for other placements
+- hides itself unless the panel is relevant for the selected player
+
+## 7. Native Grouped Volume Panel
+
+Large-card custom buttons can now open a native grouped volume panel inside the card.
+
+This uses the same shared `VolumeSlider` component as the card's built-in volume row.
+
+### Custom button target
+
+Use a custom button action like this:
+
+```yaml
+custom_buttons:
+  - icon: mdi:volume-source
+    name: Volumes
+    tap_action:
+      action: mmpc-action
+      mmpc_action: open-volume-panel
+```
+
+This also works for `volume_trailing_button_custom_button`.
+
+### Per-player config
+
+Configure the selected player's native volume panel with:
+
+- `volume_panel.show_when`
+- `volume_panel.entities`
+
+Supported `show_when` values:
+
+- `grouped` (default)
+- `always`
+
+Each entity supports:
+
+- `entity_id`
+- `name`
+- `icon`
+- `show_power`
+- `power_entity_id`
+
+Example:
+
+```yaml
+media_players:
+  - entity_id: media_player.ma_basement_sonos
+    custom_buttons:
+      - icon: mdi:volume-source
+        name: Volumes
+        tap_action:
+          action: mmpc-action
+          mmpc_action: open-volume-panel
+    volume_panel:
+      show_when: grouped
+      entities:
+        - entity_id: media_player.ma_basement_sonos
+          name: Sonos
+        - entity_id: media_player.basement_receiver
+          name: Receiver
+          show_power: true
+        - entity_id: media_player.zone2_aux
+          name: Auxiliary Speakers
+          show_power: true
+```
+
+Behavior:
+
+- the panel is available in the large card only
+- when `show_when` is `grouped`, the panel shows an explanatory message until the selected player is grouped
+- the selected player becomes the first section
+- any other currently grouped players are appended after it
+- each grouped player contributes its own `volume_panel.entities` section
+- rows use the native slider behavior already used elsewhere in the card
+- power buttons are optional per row
+- if a grouped player has no `volume_panel` config, it falls back to a single row for that player's main media entity
+
+## 8. Music Assistant Favorite Control
 
 A reusable Music Assistant favorite control is now available.
 
@@ -219,7 +315,7 @@ ma_favorite_control:
   active_color: "#f2c94c"
 ```
 
-## 8. Artwork Favorite Overlay
+## 9. Artwork Favorite Overlay
 
 The Music Assistant favorite control can be shown on the main artwork.
 
@@ -255,7 +351,7 @@ ma_favorite_control:
   active_color: "#f2c94c"
 ```
 
-## 9. Music Assistant Search Configuration
+## 10. Music Assistant Search Configuration
 
 If a search entry targets the player's `ma_entity_id`, it is now treated as a configurable Music Assistant search provider.
 
@@ -314,7 +410,7 @@ With the example above:
 - `Playlists` shows favorite playlists
 - typed search under `Music` searches artist, album, and track in MA
 
-## 10. Build Helpers
+## 11. Build Helpers
 
 Added package scripts:
 
@@ -332,7 +428,7 @@ This produces:
 - `dist/mediocre-hass-media-player-cards.js`
 - `dist/mediocre-hass-media-player-cards.js.gz`
 
-## 11. Combined Example
+## 12. Combined Example
 
 ```yaml
 type: custom:mediocre-multi-media-player-card
@@ -369,6 +465,20 @@ media_players:
   - entity_id: media_player.ma_basement_sonos
     ma_entity_id: media_player.ma_basement_sonos
     ma_favorite_button_entity_id: button.ma_basement_favorite_current_song
+    custom_buttons:
+      - icon: mdi:volume-source
+        name: Volumes
+        tap_action:
+          action: mmpc-action
+          mmpc_action: open-volume-panel
+    volume_panel:
+      show_when: grouped
+      entities:
+        - entity_id: media_player.ma_basement_sonos
+          name: Sonos
+        - entity_id: media_player.basement_receiver
+          name: Receiver
+          show_power: true
     search:
       - entity_id: media_player.ma_basement_sonos
         name: MA Basement Sonos
@@ -384,9 +494,10 @@ media_players:
     search: []
 ```
 
-## 12. Current Limitations
+## 13. Current Limitations
 
 - Home Assistant media browser root filtering only affects the first/root Browse Media screen
+- the native grouped volume panel currently opens only in the large-card view
 - Music Assistant unfavorite currently depends on `mass_queue.unfavorite_current_item`, which is limited for some provider-backed items
 - Music Assistant search favorites are exposed through the search view, not the media browser
 - the forced `All` MA search chip still shows all MA favorite categories, not only the configured subset

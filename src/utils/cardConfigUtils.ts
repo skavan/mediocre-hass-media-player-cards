@@ -34,6 +34,7 @@ export const getDefaultValuesFromConfig = (
         ]
     : null,
   ma_favorite_control: config?.ma_favorite_control,
+  volume_panel: config?.volume_panel,
   ma_entity_id: config?.ma_entity_id ?? null,
   ma_favorite_button_entity_id: config?.ma_favorite_button_entity_id ?? null,
   lms_entity_id: config?.lms_entity_id ?? null,
@@ -51,6 +52,8 @@ export const getDefaultValuesFromConfig = (
       config?.options?.show_volume_step_buttons ?? false,
     always_show_footer_more_actions:
       config?.options?.always_show_footer_more_actions ?? false,
+    hide_mini_player_on_secondary_views:
+      config?.options?.hide_mini_player_on_secondary_views ?? false,
     media_browser_view_icon: config?.options?.media_browser_view_icon ?? "",
     player_view_icon: config?.options?.player_view_icon ?? "",
     use_volume_up_down_for_step_buttons:
@@ -92,6 +95,7 @@ export const getDefaultValuesFromMassiveConfig = (
         ]
     : null,
   ma_favorite_control: config?.ma_favorite_control,
+  volume_panel: config?.volume_panel,
   ma_entity_id: config?.ma_entity_id ?? null,
   ma_favorite_button_entity_id: config?.ma_favorite_button_entity_id ?? null,
   lms_entity_id: config?.lms_entity_id ?? null,
@@ -103,6 +107,8 @@ export const getDefaultValuesFromMassiveConfig = (
       config?.options?.always_show_power_button ?? false,
     always_show_footer_more_actions:
       config?.options?.always_show_footer_more_actions ?? false,
+    hide_mini_player_on_secondary_views:
+      config?.options?.hide_mini_player_on_secondary_views ?? false,
     media_browser_view_icon: config?.options?.media_browser_view_icon ?? "",
     player_view_icon: config?.options?.player_view_icon ?? "",
     show_volume_step_buttons:
@@ -134,6 +140,7 @@ export const getSimpleConfigFromFormValues = (
     delete config.action;
   if (!config.ma_entity_id) delete config.ma_entity_id;
   if (!config.ma_favorite_control) delete config.ma_favorite_control;
+  if (!config.volume_panel) delete config.volume_panel;
 
   // Only preserve ma_favorite_button_entity_id if it is a non-empty string
   if (!config.ma_favorite_button_entity_id) {
@@ -178,6 +185,9 @@ export const getSimpleConfigFromFormValues = (
   }
   if (config.options?.always_show_footer_more_actions === false) {
     delete config.options.always_show_footer_more_actions;
+  }
+  if (config.options?.hide_mini_player_on_secondary_views === false) {
+    delete config.options.hide_mini_player_on_secondary_views;
   }
   if (!config.options?.media_browser_view_icon) {
     delete config.options?.media_browser_view_icon;
@@ -229,6 +239,7 @@ export const getSimpleConfigFromMassiveFormValues = (
     delete config.action;
   if (!config.ma_entity_id) delete config.ma_entity_id;
   if (!config.ma_favorite_control) delete config.ma_favorite_control;
+  if (!config.volume_panel) delete config.volume_panel;
 
   // Only preserve ma_favorite_button_entity_id if it is a non-empty string
   if (!config.ma_favorite_button_entity_id) {
@@ -263,6 +274,9 @@ export const getSimpleConfigFromMassiveFormValues = (
   }
   if (config.options?.always_show_footer_more_actions === false) {
     delete config.options.always_show_footer_more_actions;
+  }
+  if (config.options?.hide_mini_player_on_secondary_views === false) {
+    delete config.options.hide_mini_player_on_secondary_views;
   }
   if (!config.options?.media_browser_view_icon) {
     delete config.options?.media_browser_view_icon;

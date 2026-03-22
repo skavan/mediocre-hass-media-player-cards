@@ -4,13 +4,14 @@ import { interactionConfigSchema } from "./actionTypes";
 const commonMediocreMediaPlayerCardConfigOptionsSchema = type({
   "always_show_power_button?": "boolean | null", // Always show the power button, even if the media player is on
   "always_show_footer_more_actions?": "boolean", // Always show the footer more-actions button in the large view, even when no custom buttons are configured
+  "hide_mini_player_on_secondary_views?": "boolean", // Hide the mini player shown below non-home views in the large card
   "media_browser_view_icon?": "string", // Icon for the media browser tab in the large footer navigation
   "player_view_icon?": "string", // Icon for the main player tab in the large footer navigation
   "show_volume_step_buttons?": "boolean", // Show volume step buttons + - on volume sliders
   "use_volume_up_down_for_step_buttons?": "boolean", // Use volume_up and volume_down services for step buttons instead of setting volume using set_volume. This breaks volume sync when step buttons are used.
   "use_experimental_lms_media_browser?": "boolean", // Use the experimental LMS media browser instead of the default one when an LMS entity is used and lyrion_cli integration is present.
   "volume_trailing_button?":
-    "'power' | 'favorite' | 'ma_favorite' | 'custom' | 'none'", // Button shown to the right of the large view volume slider
+    "'power' | 'favorite' | 'ma_favorite' | 'group_volume' | 'custom' | 'none'", // Button shown to the right of the large view volume slider
 });
 
 const maFavoriteControlSchema = type({
@@ -23,6 +24,25 @@ const maFavoriteControlSchema = type({
     "'xx-small' | 'x-small' | 'small' | 'medium' | 'large'", // Size of the artwork overlay button
   "artwork_inset_top?": "string", // Top inset for the artwork overlay button (e.g. 14px or 1rem)
   "artwork_inset_right?": "string", // Right inset for the artwork overlay button (e.g. 14px or 1rem)
+});
+
+const volumePanelEntitySchema = type({
+  entity_id: "string",
+  "name?": "string | null",
+  "icon?": "string | null",
+  "show_power?": "boolean | null",
+  "power_entity_id?": type("string").or("null").or("undefined"),
+});
+
+const volumePanelGroupSchema = type({
+  "name?": "string | null",
+  entities: volumePanelEntitySchema.array(),
+});
+
+const volumePanelSchema = type({
+  "show_when?": "'grouped' | 'always'",
+  "entities?": volumePanelEntitySchema.array().or("undefined"),
+  "groups?": volumePanelGroupSchema.array().or("undefined"), // legacy nested grouping shape, flattened into the player's section
 });
 
 const mediaTypeConfigSchema = type({
@@ -92,6 +112,7 @@ const commonMediocreMediaPlayerCardConfigSchema = type({
   "search?": searchConfig,
   "media_browser?": mediaBrowser,
   "ma_favorite_control?": maFavoriteControlSchema.or("undefined"),
+  "volume_panel?": volumePanelSchema.or("undefined"),
   "volume_trailing_button_custom_button?":
     customButton.or("null").or("undefined"),
   "options?": commonMediocreMediaPlayerCardConfigOptionsSchema,
@@ -125,6 +146,7 @@ export const MediocreMultiMediaPlayer = type({
   "lms_entity_id?": type("string").or("null").or("undefined"), // LMS entity_id (adds LMS specific features)
   "search?": searchConfig,
   "media_browser?": mediaBrowser,
+  "volume_panel?": volumePanelSchema.or("undefined"),
   "volume_trailing_button_custom_button?":
     customButton.or("null").or("undefined"),
   "action?": interactionConfigSchema,
@@ -132,6 +154,7 @@ export const MediocreMultiMediaPlayer = type({
 
 export const commonMediaPlayerCardOptions = type({
   "always_show_footer_more_actions?": "boolean", // Always show the footer more-actions button in the large view, even when no custom buttons are configured
+  "hide_mini_player_on_secondary_views?": "boolean", // Hide the mini player shown below non-home views in the large card
   "media_browser_view_icon?": "string", // Icon for the media browser tab in the large footer navigation
   "player_view_icon?": "string", // Icon for the main player tab in the large footer navigation
   "player_is_active_when?": "'playing' | 'playing_or_paused'", // When to consider a media player as active.
@@ -139,7 +162,7 @@ export const commonMediaPlayerCardOptions = type({
   "use_volume_up_down_for_step_buttons?": "boolean", // Use volume_up and volume_down services for step buttons instead of setting volume using set_volume. This breaks volume sync when step buttons are used.
   "use_experimental_lms_media_browser?": "boolean", // Use the experimental LMS media browser instead of the default one when an LMS entity is used and lyrion_cli integration is present.
   "volume_trailing_button?":
-    "'power' | 'favorite' | 'ma_favorite' | 'custom' | 'none'", // Button shown to the right of the large view volume slider
+    "'power' | 'favorite' | 'ma_favorite' | 'group_volume' | 'custom' | 'none'", // Button shown to the right of the large view volume slider
 });
 
 export const commonMediaPlayerCardSchema = type({
@@ -183,6 +206,9 @@ export const MediocreMultiMediaPlayerCardConfigSchema =
 export type SearchMediaType = typeof mediaTypeConfigSchema.infer;
 export type MediaBrowserMediaType = typeof mediaTypeConfigSchema.infer;
 export type MaFavoriteControl = typeof maFavoriteControlSchema.infer;
+export type VolumePanel = typeof volumePanelSchema.infer;
+export type VolumePanelGroup = typeof volumePanelGroupSchema.infer;
+export type VolumePanelEntity = typeof volumePanelEntitySchema.infer;
 export type CommonMediocreMediaPlayerCardConfig =
   typeof commonMediocreMediaPlayerCardConfigSchema.infer;
 export type MediocreMediaPlayerCardConfig =
