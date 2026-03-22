@@ -7,6 +7,7 @@ import {
   MaSearchResponse,
 } from "./types";
 import { useHassMessagePromise } from "@hooks/useHassMessagePromise";
+import { musicMediaTypes } from "./constants";
 
 export const useSearchQuery = (debounceQuery: string, filter: MaFilterType) => {
   const [configEntry, setConfigEntry] = useState(null);
@@ -37,8 +38,13 @@ export const useSearchQuery = (debounceQuery: string, filter: MaFilterType) => {
       service_data: {
         name: debounceQuery,
         config_entry_id: configEntry,
-        media_type: filter === "all" ? undefined : filter,
-        limit: filter === "all" ? 8 : 100,
+        media_type:
+          filter === "all"
+            ? undefined
+            : filter === "music"
+              ? musicMediaTypes
+              : [filter],
+        limit: filter === "all" ? 8 : filter === "music" ? 24 : 100,
       },
       return_response: true,
     },

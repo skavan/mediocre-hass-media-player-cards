@@ -81,6 +81,7 @@ export const SearchView = memo<SearchViewProps>(({ height }) => {
       return (
         <MaSearch
           renderHeader={renderHeader}
+          filterConfig={selectedSearchProvider.media_types}
           maEntityId={ma_entity_id}
           horizontalPadding={16}
           maxHeight={height}

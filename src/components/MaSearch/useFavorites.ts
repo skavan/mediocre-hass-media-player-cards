@@ -7,7 +7,7 @@ import {
   MaMediaType,
   MaSearchResponse,
 } from "./types";
-import { responseKeyMediaTypeMap } from "./constants";
+import { musicMediaTypes, responseKeyMediaTypeMap } from "./constants";
 
 export const useFavorites = (filter: MaFilterType, enabled: boolean) => {
   const [configEntry, setConfigEntry] = useState(null);
@@ -87,6 +87,11 @@ export const useFavorites = (filter: MaFilterType, enabled: boolean) => {
           getResult(mediaType)
         )
       ).then(() => {
+        setLoading(false);
+        setResults(newResults);
+      });
+    } else if (filter === "music") {
+      Promise.all(musicMediaTypes.map(mediaType => getResult(mediaType))).then(() => {
         setLoading(false);
         setResults(newResults);
       });

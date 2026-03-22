@@ -9,7 +9,7 @@ export type MaMediaType =
   | "podcast";
 
 // Filter types (includes "all" in addition to MaMediaType)
-export type MaFilterType = "all" | MaMediaType;
+export type MaFilterType = "all" | "music" | MaMediaType;
 
 // Enqueue modes for media playback
 export type MaEnqueueMode =

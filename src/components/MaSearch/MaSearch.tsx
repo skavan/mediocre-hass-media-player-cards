@@ -1,11 +1,11 @@
 import { Chip, IconButton, Input } from "@components";
-import { useState } from "preact/hooks";
+import { useEffect, useMemo, useState } from "preact/hooks";
 import { useDebounce } from "@uidotdev/usehooks";
 import { searchStyles } from "@components/MediaSearch";
 import { MaFilterType, MaEnqueueMode } from "./types";
 import { useSearchQuery } from "./useSearchQuery";
 import { useFavorites } from "./useFavorites";
-import { filters } from "./constants";
+import { getMaFilterConfig } from "./constants";
 import { MaMediaItemsList } from "./MaMediaItemsList";
 import { JSX } from "preact/jsx-runtime";
 import { useIntl } from "@components/i18n";
@@ -13,11 +13,13 @@ import {
   OverlayMenu,
   OverlayMenuItem,
 } from "@components/OverlayMenu/OverlayMenu";
+import type { SearchMediaType } from "@types";
 
 export type MaSearchProps = {
   maEntityId: string;
   horizontalPadding?: number;
   additionalOptions?: OverlayMenuItem[];
+  filterConfig?: SearchMediaType[];
   searchBarPosition?: "top" | "bottom";
   maxHeight?: number;
   renderHeader?: () => JSX.Element;
@@ -28,6 +30,7 @@ export const MaSearch = ({
   horizontalPadding,
   searchBarPosition = "top",
   additionalOptions = [],
+  filterConfig,
   maxHeight = 300,
   renderHeader,
 }: MaSearchProps) => {
@@ -36,6 +39,12 @@ export const MaSearch = ({
   const [enqueueMode, setEnqueueMode] = useState<MaEnqueueMode>("play");
   const debouncedQuery = useDebounce(query, 600);
   const [activeFilter, setActiveFilter] = useState<MaFilterType>("all");
+  const resolvedFilters = useMemo(() => getMaFilterConfig(filterConfig), [filterConfig]);
+
+  useEffect(() => {
+    if (resolvedFilters.some(filter => filter.type === activeFilter)) return;
+    setActiveFilter(resolvedFilters[0]?.type ?? "all");
+  }, [activeFilter, resolvedFilters]);
 
   const { results, loading, playItem } = useSearchQuery(
     debouncedQuery,
@@ -133,7 +142,7 @@ export const MaSearch = ({
   };
 
   const renderFilterChips = () => {
-    return filters.map(filter => (
+    return resolvedFilters.map(filter => (
       <Chip
         css={searchStyles.chip}
         style={{
