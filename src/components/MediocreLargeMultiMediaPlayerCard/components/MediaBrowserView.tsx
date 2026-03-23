@@ -52,6 +52,11 @@ export const MediaBrowserView = memo<MediaBrowserViewProps>(({ height }) => {
         }
         lmsEntityId={lms_entity_id}
         horizontalPadding={16}
+        maLibraryRootColumns={config?.options?.ma_library_root_columns}
+        maLibraryThumbColumns={config?.options?.ma_library_thumbs_columns}
+        maLibraryCompactThumbColumns={
+          config?.options?.ma_library_compact_thumbs_columns
+        }
         renderHeader={renderHeader}
         maxHeight={height}
       />

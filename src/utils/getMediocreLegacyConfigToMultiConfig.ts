@@ -89,8 +89,32 @@ export const getMediocreLegacyConfigToMediocreMultiConfig = (
       ...(config.options?.media_browser_view_icon
         ? { media_browser_view_icon: config.options.media_browser_view_icon }
         : {}),
+      ...(config.options?.ma_library_compact_thumbs_columns
+        ? {
+            ma_library_compact_thumbs_columns:
+              config.options.ma_library_compact_thumbs_columns,
+          }
+        : {}),
+      ...(config.options?.ma_library_root_columns
+        ? { ma_library_root_columns: config.options.ma_library_root_columns }
+        : {}),
+      ...(config.options?.ma_library_thumbs_columns
+        ? { ma_library_thumbs_columns: config.options.ma_library_thumbs_columns }
+        : {}),
+      ...(config.options?.ma_search_compact_thumbs_columns
+        ? {
+            ma_search_compact_thumbs_columns:
+              config.options.ma_search_compact_thumbs_columns,
+          }
+        : {}),
+      ...(config.options?.ma_search_thumbs_columns
+        ? { ma_search_thumbs_columns: config.options.ma_search_thumbs_columns }
+        : {}),
       ...(config.options?.player_view_icon
         ? { player_view_icon: config.options.player_view_icon }
+        : {}),
+      ...(config.options?.search_view_title
+        ? { search_view_title: config.options.search_view_title }
         : {}),
       ...(config.options?.volume_trailing_button
         ? { volume_trailing_button: config.options.volume_trailing_button }

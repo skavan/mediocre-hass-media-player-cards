@@ -66,6 +66,7 @@ export const searchStyles = {
   inputRow: css({
     display: "flex",
     flexDirection: "row",
+    alignItems: "center",
     gap: "8px",
     padding: "1px var(--mmpc-search-padding, 0px)",
   }),
@@ -78,5 +79,17 @@ export const searchStyles = {
     fontSize: "12px",
     lineHeight: 1.3,
     padding: "0px var(--mmpc-search-padding, 0px)",
+  }),
+  headerIndicator: css({
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: 26,
+    height: 26,
+    borderRadius: 999,
+    background: "rgba(255, 255, 255, 0.08)",
+    color: theme.colors.onCard,
+    boxShadow: "inset 0 0 0 1px rgba(255, 255, 255, 0.08)",
+    flexShrink: 0,
   }),
 };

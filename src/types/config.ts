@@ -5,8 +5,14 @@ const commonMediocreMediaPlayerCardConfigOptionsSchema = type({
   "always_show_power_button?": "boolean | null", // Always show the power button, even if the media player is on
   "always_show_footer_more_actions?": "boolean", // Always show the footer more-actions button in the large view, even when no custom buttons are configured
   "hide_mini_player_on_secondary_views?": "boolean", // Hide the mini player shown below non-home views in the large card
+  "ma_library_compact_thumbs_columns?": "number", // Number of columns for compact-thumb view on MA library category pages
+  "ma_library_root_columns?": "number", // Number of columns for the MA library root category tiles
+  "ma_library_thumbs_columns?": "number", // Number of columns for thumb view on MA library category pages
+  "ma_search_compact_thumbs_columns?": "number", // Number of columns for compact-thumb view in MA global search
+  "ma_search_thumbs_columns?": "number", // Number of columns for thumb view in MA global search
   "media_browser_view_icon?": "string", // Icon for the media browser tab in the large footer navigation
   "player_view_icon?": "string", // Icon for the main player tab in the large footer navigation
+  "search_view_title?": "string", // Custom title shown for the large search view
   "show_volume_step_buttons?": "boolean", // Show volume step buttons + - on volume sliders
   "use_volume_up_down_for_step_buttons?": "boolean", // Use volume_up and volume_down services for step buttons instead of setting volume using set_volume. This breaks volume sync when step buttons are used.
   "use_experimental_lms_media_browser?": "boolean", // Use the experimental LMS media browser instead of the default one when an LMS entity is used and lyrion_cli integration is present.
@@ -155,9 +161,15 @@ export const MediocreMultiMediaPlayer = type({
 export const commonMediaPlayerCardOptions = type({
   "always_show_footer_more_actions?": "boolean", // Always show the footer more-actions button in the large view, even when no custom buttons are configured
   "hide_mini_player_on_secondary_views?": "boolean", // Hide the mini player shown below non-home views in the large card
+  "ma_library_compact_thumbs_columns?": "number", // Number of columns for compact-thumb view on MA library category pages
+  "ma_library_root_columns?": "number", // Number of columns for the MA library root category tiles
+  "ma_library_thumbs_columns?": "number", // Number of columns for thumb view on MA library category pages
+  "ma_search_compact_thumbs_columns?": "number", // Number of columns for compact-thumb view in MA global search
+  "ma_search_thumbs_columns?": "number", // Number of columns for thumb view in MA global search
   "media_browser_view_icon?": "string", // Icon for the media browser tab in the large footer navigation
   "player_view_icon?": "string", // Icon for the main player tab in the large footer navigation
   "player_is_active_when?": "'playing' | 'playing_or_paused'", // When to consider a media player as active.
+  "search_view_title?": "string", // Custom title shown for the large search view
   "show_volume_step_buttons?": "boolean", // Show volume step buttons + - on volume sliders
   "use_volume_up_down_for_step_buttons?": "boolean", // Use volume_up and volume_down services for step buttons instead of setting volume using set_volume. This breaks volume sync when step buttons are used.
   "use_experimental_lms_media_browser?": "boolean", // Use the experimental LMS media browser instead of the default one when an LMS entity is used and lyrion_cli integration is present.

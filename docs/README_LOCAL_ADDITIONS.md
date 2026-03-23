@@ -159,6 +159,48 @@ options:
   hide_mini_player_on_secondary_views: true
 ```
 
+### MA Search and Library density / title options
+
+The large card now also supports MA-specific options for the Search and Browse Media surfaces.
+
+Options:
+
+- `options.search_view_title`
+- `options.ma_search_thumbs_columns`
+- `options.ma_search_compact_thumbs_columns`
+- `options.ma_library_root_columns`
+- `options.ma_library_thumbs_columns`
+- `options.ma_library_compact_thumbs_columns`
+
+Behavior:
+
+- `search_view_title` overrides the large Search view title
+- `ma_search_thumbs_columns` controls the Global Search `thumbs` grid
+- `ma_search_compact_thumbs_columns` controls the Global Search `compact thumbs` grid
+- `ma_library_root_columns` controls the root category tiles in the MA-backed Browse Media view
+- `ma_library_thumbs_columns` controls MA library category pages in `thumbs` view
+- `ma_library_compact_thumbs_columns` controls MA library category pages in `compact thumbs` view
+
+Defaults:
+
+- Search `thumbs`: `3`
+- Search `compact thumbs`: `4`
+- Library root tiles: `4`
+- Library `thumbs`: `4`
+- Library `compact thumbs`: `5`
+
+Example:
+
+```yaml
+options:
+  search_view_title: Global Search
+  ma_search_thumbs_columns: 3
+  ma_search_compact_thumbs_columns: 4
+  ma_library_root_columns: 4
+  ma_library_thumbs_columns: 4
+  ma_library_compact_thumbs_columns: 5
+```
+
 ## 4. Large Card Volume Trailing Button
 
 The large player view supports a configurable button to the right of the volume slider.
@@ -390,7 +432,7 @@ ma_favorite_control:
   active_color: "#f2c94c"
 ```
 
-## 8. Music Assistant Library, Favorites, and Discover
+## 8. Music Assistant Global Search and Library
 
 If a search entry targets the player's `ma_entity_id`, it is treated as a configurable Music Assistant search provider.
 
@@ -398,30 +440,58 @@ If a media browser entry targets the player's `ma_entity_id`, the large-card Bro
 
 This allows the existing `search.media_types` and `media_browser.media_types` YAML shapes to drive the Music Assistant views.
 
-### Blank-query modes
+### MA Search
 
-Blank query supports three MA modes:
+The MA-backed Search tab is now a true `Global Search` surface.
 
-- `Favorites`
-- `Library`
-- `Discover`
+Behavior:
+
+- the old `Favorites | Library | Discover` mode row has been removed
+- the page is query-first instead of mode-first
+- the view title defaults to `Global Search` and can be overridden with `options.search_view_title`
+- category chips still filter the search scope (`All`, `Tracks`, `Artists`, etc.)
+- typed queries use `music_assistant.search`
+- blank query shows grouped default results by category
+- the overflow menu currently supports:
+  - `Only show favorites`
+  - `View Mode`
+  - existing enqueue mode options
+- when `Only show favorites` is enabled, the header area shows a filled-heart indicator
+
+View density defaults:
+
+- `list`: row list
+- `thumbs`: `3` columns by default
+- `compact thumbs`: `4` columns by default
+
+The blank-query favorites toggle uses Music Assistant library data with `favorite: true`.
+
+### MA Library / Browse Media
+
+The MA-backed Browse Media tab is now a library-first surface.
+
+Behavior:
+
+- the root page starts with category tiles
+- those root tiles are filtered by `media_browser.media_types`
+- clicking a category opens that category page
+- the category page supports:
+  - scoped search within that category
+  - `Only show favorites`
+  - view mode switching
+- when `Only show favorites` is enabled, the header area shows a filled-heart indicator
+
+View density defaults:
+
+- root category tiles: `4` columns by default
+- category `list`: row list
+- category `thumbs`: `4` columns by default
+- category `compact thumbs`: `5` columns by default
 
 Defaults:
 
-- MA Search defaults to `Favorites`
-- MA Browse Media defaults to `Library`
-
-Query behavior:
-
-- `Favorites` uses `music_assistant.get_library` with `favorite: true`
-- `Library` uses `music_assistant.get_library`
-- `Discover` is provider-wide and uses `music_assistant.search` once you type
-
-Typed query behavior:
-
-- typed `Favorites` searches favorites only
-- typed `Library` searches MA library only
-- typed `Discover` searches across MA-connected providers and sources
+- MA Search is Global Search
+- MA Browse Media is Library
 
 ### Configurable MA media types
 
@@ -475,23 +545,26 @@ search:
 With the example above:
 
 - `All` is still prepended automatically
-- in `Favorites` mode, `All` shows all MA favorites
-- in `Library` mode, `All` shows MA library items
-- in `Discover` mode, you type to search across MA-connected providers
-- blank `Discover` shows a prompt to type rather than a results grid
+- Global Search uses those chips as search-scope filters
+- Browse Media uses those categories as root library tiles
 
-### MA search and browse UI behavior
+### MA search and library UI behavior
 
 The current MA search/library UI behaves like this:
 
-- blank `Favorites` shows favorite items
-- blank `Library` shows library items
-- blank `Discover` prompts you to type
-- results progressively load more items as you scroll
+- Global Search uses category chips only; it no longer has the old scope row
+- Global Search has a vertical-dots menu for favorites-only, view mode, and enqueue controls
+- Global Search remembers the selected view mode independently per category
+- Browse Media uses category tiles at the root and a breadcrumbed category page after selection
+- Browse Media remembers the selected view mode independently per category page
+- Search and Library both support:
+  - `list`
+  - `thumbs`
+  - `compact thumbs`
+- tracks no longer use a unique oversized full-row renderer in Search; Search and Library now share the same MA results renderer
 - the search input shows a clear `x` when text is present
 - when text is present, the clear `x` takes precedence over the spinner
-- the mode/helper text above results is hidden by default and is only rendered when a caller explicitly opts in
-- the media-type chips (`All`, `Artists`, `Albums`, etc.) are a single horizontal strip rather than a wrapped grid
+- the category chips (`All`, `Artists`, `Albums`, etc.) are a single horizontal strip rather than a wrapped grid
 - that strip is swipe-scrollable on touch devices and uses a thin horizontal scrollbar when needed
 
 ### Missing-artwork placeholders
@@ -577,6 +650,12 @@ options:
   player_is_active_when: playing_or_paused
   player_view_icon: mdi:play
   media_browser_view_icon: mdi:folder-star
+  search_view_title: Global Search
+  ma_search_thumbs_columns: 3
+  ma_search_compact_thumbs_columns: 4
+  ma_library_root_columns: 4
+  ma_library_thumbs_columns: 4
+  ma_library_compact_thumbs_columns: 5
   volume_trailing_button: group_volume
   always_show_footer_more_actions: true
   hide_mini_player_on_secondary_views: true
@@ -636,8 +715,9 @@ media_players:
 - Home Assistant media browser root filtering only affects the first/root Browse Media screen
 - the native grouped-volume panel currently opens in the large-card view
 - Music Assistant unfavorite currently depends on `mass_queue.unfavorite_current_item`, which is limited for some provider-backed items
-- the MA library view is currently a flat library/search page, not a deep drill-down browser such as `Artist -> Albums -> Tracks`
-- MA `Discover` still relies on repeated larger searches rather than true offset-based paging
+- the MA library view currently provides root category tiles and category pages, but not a deeper nested browser such as `Artist -> Albums -> Tracks`
+- blank Global Search currently shows grouped default results rather than true recent/popular/recommended feeds
+- the overflow menus do not yet implement full MA-style provider filtering and sort controls
 - the HA browser/search paths only reflect what the selected HA media player exposes through `browse_media` / `search_media`
 - the forced `All` MA chip is broader than the configured subset and is still prepended automatically
 - some MA media types may not be available on every backend or HA integration version; unsupported categories now fail soft instead of breaking the whole `All` view

@@ -54,8 +54,32 @@ export const getDefaultValuesFromConfig = (
       config?.options?.always_show_footer_more_actions ?? false,
     hide_mini_player_on_secondary_views:
       config?.options?.hide_mini_player_on_secondary_views ?? false,
+    ...(config?.options?.ma_library_compact_thumbs_columns
+      ? {
+          ma_library_compact_thumbs_columns:
+            config.options.ma_library_compact_thumbs_columns,
+        }
+      : {}),
+    ...(config?.options?.ma_library_root_columns
+      ? { ma_library_root_columns: config.options.ma_library_root_columns }
+      : {}),
+    ...(config?.options?.ma_library_thumbs_columns
+      ? { ma_library_thumbs_columns: config.options.ma_library_thumbs_columns }
+      : {}),
+    ...(config?.options?.ma_search_compact_thumbs_columns
+      ? {
+          ma_search_compact_thumbs_columns:
+            config.options.ma_search_compact_thumbs_columns,
+        }
+      : {}),
+    ...(config?.options?.ma_search_thumbs_columns
+      ? { ma_search_thumbs_columns: config.options.ma_search_thumbs_columns }
+      : {}),
     media_browser_view_icon: config?.options?.media_browser_view_icon ?? "",
     player_view_icon: config?.options?.player_view_icon ?? "",
+    ...(config?.options?.search_view_title
+      ? { search_view_title: config.options.search_view_title }
+      : {}),
     use_volume_up_down_for_step_buttons:
       config?.options?.use_volume_up_down_for_step_buttons ?? false,
     use_experimental_lms_media_browser:
@@ -109,8 +133,32 @@ export const getDefaultValuesFromMassiveConfig = (
       config?.options?.always_show_footer_more_actions ?? false,
     hide_mini_player_on_secondary_views:
       config?.options?.hide_mini_player_on_secondary_views ?? false,
+    ...(config?.options?.ma_library_compact_thumbs_columns
+      ? {
+          ma_library_compact_thumbs_columns:
+            config.options.ma_library_compact_thumbs_columns,
+        }
+      : {}),
+    ...(config?.options?.ma_library_root_columns
+      ? { ma_library_root_columns: config.options.ma_library_root_columns }
+      : {}),
+    ...(config?.options?.ma_library_thumbs_columns
+      ? { ma_library_thumbs_columns: config.options.ma_library_thumbs_columns }
+      : {}),
+    ...(config?.options?.ma_search_compact_thumbs_columns
+      ? {
+          ma_search_compact_thumbs_columns:
+            config.options.ma_search_compact_thumbs_columns,
+        }
+      : {}),
+    ...(config?.options?.ma_search_thumbs_columns
+      ? { ma_search_thumbs_columns: config.options.ma_search_thumbs_columns }
+      : {}),
     media_browser_view_icon: config?.options?.media_browser_view_icon ?? "",
     player_view_icon: config?.options?.player_view_icon ?? "",
+    ...(config?.options?.search_view_title
+      ? { search_view_title: config.options.search_view_title }
+      : {}),
     show_volume_step_buttons:
       config?.options?.show_volume_step_buttons ?? false,
     use_volume_up_down_for_step_buttons:
@@ -189,11 +237,29 @@ export const getSimpleConfigFromFormValues = (
   if (config.options?.hide_mini_player_on_secondary_views === false) {
     delete config.options.hide_mini_player_on_secondary_views;
   }
+  if (!config.options?.ma_library_compact_thumbs_columns) {
+    delete config.options?.ma_library_compact_thumbs_columns;
+  }
+  if (!config.options?.ma_library_root_columns) {
+    delete config.options?.ma_library_root_columns;
+  }
+  if (!config.options?.ma_library_thumbs_columns) {
+    delete config.options?.ma_library_thumbs_columns;
+  }
+  if (!config.options?.ma_search_compact_thumbs_columns) {
+    delete config.options?.ma_search_compact_thumbs_columns;
+  }
+  if (!config.options?.ma_search_thumbs_columns) {
+    delete config.options?.ma_search_thumbs_columns;
+  }
   if (!config.options?.media_browser_view_icon) {
     delete config.options?.media_browser_view_icon;
   }
   if (!config.options?.player_view_icon) {
     delete config.options?.player_view_icon;
+  }
+  if (!config.options?.search_view_title) {
+    delete config.options?.search_view_title;
   }
   if (config.options?.use_volume_up_down_for_step_buttons === false) {
     delete config.options.use_volume_up_down_for_step_buttons;
@@ -278,8 +344,26 @@ export const getSimpleConfigFromMassiveFormValues = (
   if (config.options?.hide_mini_player_on_secondary_views === false) {
     delete config.options.hide_mini_player_on_secondary_views;
   }
+  if (!config.options?.ma_library_compact_thumbs_columns) {
+    delete config.options?.ma_library_compact_thumbs_columns;
+  }
+  if (!config.options?.ma_library_root_columns) {
+    delete config.options?.ma_library_root_columns;
+  }
+  if (!config.options?.ma_library_thumbs_columns) {
+    delete config.options?.ma_library_thumbs_columns;
+  }
+  if (!config.options?.ma_search_compact_thumbs_columns) {
+    delete config.options?.ma_search_compact_thumbs_columns;
+  }
+  if (!config.options?.ma_search_thumbs_columns) {
+    delete config.options?.ma_search_thumbs_columns;
+  }
   if (!config.options?.media_browser_view_icon) {
     delete config.options?.media_browser_view_icon;
+  }
+  if (!config.options?.search_view_title) {
+    delete config.options?.search_view_title;
   }
   if (config.options?.show_volume_step_buttons === false) {
     delete config.options.show_volume_step_buttons;

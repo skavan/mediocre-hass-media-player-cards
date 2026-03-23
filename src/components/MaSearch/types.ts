@@ -20,6 +20,8 @@ export type MaEnqueueMode =
   | "replace_next"
   | "add";
 
+export type MaViewMode = "list" | "thumbs" | "compact_thumbs";
+
 // Filter configuration type
 export interface MaFilterConfig {
   type: MaFilterType;

@@ -2,11 +2,10 @@ import { Chip, Icon, IconButton, Input } from "@components";
 import { useEffect, useMemo, useState } from "preact/hooks";
 import { useDebounce } from "@uidotdev/usehooks";
 import { searchStyles } from "@components/MediaSearch";
-import { MaFilterType, MaEnqueueMode } from "./types";
+import { MaEnqueueMode, MaFilterType } from "./types";
 import { useSearchQuery } from "./useSearchQuery";
 import { useLibrary } from "./useLibrary";
 import { getMaFilterConfig } from "./constants";
-import { MaMediaItemsList } from "./MaMediaItemsList";
 import { JSX } from "preact/jsx-runtime";
 import { useIntl } from "@components/i18n";
 import {
@@ -14,8 +13,12 @@ import {
   OverlayMenuItem,
 } from "@components/OverlayMenu/OverlayMenu";
 import type { SearchMediaType } from "@types";
+import { MaResultsView } from "./MaResultsView";
+import { useMaPlayItem } from "./useMaPlayItem";
+import { usePersistedMaViewMode } from "./usePersistedMaViewMode";
 
 export type MaSearchProps = {
+  compactThumbColumns?: number;
   maEntityId: string;
   horizontalPadding?: number;
   additionalOptions?: OverlayMenuItem[];
@@ -27,9 +30,10 @@ export type MaSearchProps = {
   searchBarPosition?: "top" | "bottom";
   maxHeight?: number;
   renderHeader?: () => JSX.Element;
+  thumbColumns?: number;
 };
 
-export type MaSearchScope = "favorites" | "library" | "discover";
+export type MaSearchScope = "global";
 
 export const MaSearch = ({
   maEntityId,
@@ -37,29 +41,26 @@ export const MaSearch = ({
   searchBarPosition = "top",
   additionalOptions = [],
   filterConfig,
-  defaultScope = "favorites",
-  showModeText = false,
-  providerLabel,
-  providerMenuItems,
-  maxHeight = 300,
   renderHeader,
+  thumbColumns,
+  compactThumbColumns,
 }: MaSearchProps) => {
   const { t } = useIntl();
   const [query, setQuery] = useState("");
   const [enqueueMode, setEnqueueMode] = useState<MaEnqueueMode>("play");
+  const [favoritesOnly, setFavoritesOnly] = useState(false);
   const normalizedQuery = query.trim();
   const debouncedQuery = useDebounce(normalizedQuery, 600);
   const [activeFilter, setActiveFilter] = useState<MaFilterType>("all");
-  const [scope, setScope] = useState<MaSearchScope>(defaultScope);
-  const [resultLimit, setResultLimit] = useState(getDefaultLimit("favorites", "all"));
+  const [resultLimit, setResultLimit] = useState(getDefaultLimit("all", false));
   const resolvedFilters = useMemo(() => getMaFilterConfig(filterConfig), [filterConfig]);
-  const isFavoritesScope = scope === "favorites";
-  const isLibraryScope = scope === "library";
-  const isDiscoverScope = scope === "discover";
-
-  useEffect(() => {
-    setScope(defaultScope);
-  }, [defaultScope, maEntityId]);
+  const playItem = useMaPlayItem();
+  const [viewMode, setViewMode] = usePersistedMaViewMode(
+    "global-search",
+    maEntityId,
+    activeFilter,
+    "list"
+  );
 
   useEffect(() => {
     if (resolvedFilters.some(filter => filter.type === activeFilter)) return;
@@ -67,64 +68,53 @@ export const MaSearch = ({
   }, [activeFilter, resolvedFilters]);
 
   useEffect(() => {
-    setResultLimit(getDefaultLimit(scope, activeFilter));
-  }, [scope, activeFilter, normalizedQuery]);
+    setResultLimit(getDefaultLimit(activeFilter, normalizedQuery !== ""));
+  }, [activeFilter, normalizedQuery, favoritesOnly]);
 
-  const { results, loading, playItem, canLoadMore: canLoadMoreSources } = useSearchQuery(
-    debouncedQuery,
-    activeFilter,
-    {
-      enabled: isDiscoverScope,
-      limit: resultLimit,
-    }
-  );
+  const useLibraryResults = normalizedQuery === "" || favoritesOnly;
 
-  const { library: favorites, loading: favoritesLoading, canLoadMore: canLoadMoreFavorites } =
-    useLibrary(activeFilter, {
-      enabled: isFavoritesScope,
-      favorite: true,
-      search: isFavoritesScope ? debouncedQuery : "",
-      limit: resultLimit,
-    });
-  const { library, loading: libraryLoading, canLoadMore: canLoadMoreLibrary } =
-    useLibrary(activeFilter, {
-      enabled: isLibraryScope,
-      search: isLibraryScope ? debouncedQuery : "",
-      limit: resultLimit,
-    });
-  const isLoading =
-    (isDiscoverScope && normalizedQuery !== "" && loading) ||
-    (isFavoritesScope && favoritesLoading) ||
-    (isLibraryScope && libraryLoading);
-
-  const modeText = getModeText({
-    normalizedQuery,
-    scope,
-    t,
+  const {
+    results: searchResults,
+    loading: searchLoading,
+    canLoadMore: canLoadMoreSearch,
+  } = useSearchQuery(debouncedQuery, activeFilter, {
+    enabled: !useLibraryResults,
+    limit: resultLimit,
   });
-  const displayedResults =
-    isDiscoverScope
-      ? normalizedQuery === ""
-        ? undefined
-        : results
-      : isLibraryScope
-        ? library ?? undefined
-        : favorites ?? undefined;
-  const canLoadMore = isDiscoverScope
-    ? normalizedQuery !== "" && canLoadMoreSources
-    : isLibraryScope
-      ? canLoadMoreLibrary
-      : canLoadMoreFavorites;
+
+  const {
+    library: libraryResults,
+    loading: libraryLoading,
+    canLoadMore: canLoadMoreLibrary,
+  } = useLibrary(activeFilter, {
+    enabled: useLibraryResults,
+    favorite: favoritesOnly,
+    search: useLibraryResults ? debouncedQuery : "",
+    limit: resultLimit,
+  });
+
+  const isLoading = useLibraryResults ? libraryLoading : searchLoading;
+  const displayedResults = useLibraryResults ? libraryResults : searchResults;
+  const canLoadMore = useLibraryResults ? canLoadMoreLibrary : canLoadMoreSearch;
   const emptyText =
-    isDiscoverScope && normalizedQuery === ""
-      ? t({
-          id: "Search.mode.type_to_discover_sources",
-          defaultMessage: "Type to discover across all sources.",
-        })
-      : undefined;
+    normalizedQuery === ""
+      ? favoritesOnly
+        ? t({
+            id: "Search.mode.no_favorite_results",
+            defaultMessage: "No favorite items found for this filter.",
+          })
+        : t({
+            id: "Search.mode.no_default_results",
+            defaultMessage: "No items found for this filter.",
+          })
+      : t({
+          id: "Search.mode.no_search_results",
+          defaultMessage: "No results found.",
+        });
+
   const handleLoadMore = () => {
     if (!canLoadMore || isLoading) return;
-    setResultLimit(prev => prev + getLoadMoreStep(scope, activeFilter));
+    setResultLimit(prev => prev + getLoadMoreStep(activeFilter, normalizedQuery !== ""));
   };
 
   const renderSearchBar = () => {
@@ -133,18 +123,79 @@ export const MaSearch = ({
         {!!renderHeader && renderHeader()}
         <div css={searchStyles.inputRow}>
           <Input
-            placeholder={t({ id: "Search.input_placeholder" })}
+            placeholder={t({
+              id: "Search.input_placeholder",
+              defaultMessage: "Search for media...",
+            })}
             onChange={setQuery}
             value={query}
             clearable
             loading={isLoading}
             css={searchStyles.input}
           />
+          {favoritesOnly && (
+            <div
+              css={searchStyles.headerIndicator}
+              title={t({
+                id: "Search.header.favorites_only",
+                defaultMessage: "Only showing favorites",
+              })}
+              aria-label={t({
+                id: "Search.header.favorites_only",
+                defaultMessage: "Only showing favorites",
+              })}
+            >
+              <Icon icon="mdi:heart" size="small" />
+            </div>
+          )}
           <OverlayMenu
             align="end"
             side="bottom"
             menuItems={[
               ...additionalOptions,
+              {
+                label: t({
+                  id: "Search.menu.only_favorites",
+                  defaultMessage: "Only show favorites",
+                }),
+                icon: favoritesOnly ? "mdi:heart" : "mdi:heart-outline",
+                selected: favoritesOnly,
+                onClick: () => setFavoritesOnly(value => !value),
+              },
+              {
+                type: "title",
+                label: t({
+                  id: "Search.menu.view_mode",
+                  defaultMessage: "View Mode",
+                }),
+              },
+              {
+                label: t({
+                  id: "Search.view_mode.list",
+                  defaultMessage: "List",
+                }),
+                icon: "mdi:view-list",
+                selected: viewMode === "list",
+                onClick: () => setViewMode("list"),
+              },
+              {
+                label: t({
+                  id: "Search.view_mode.thumbs",
+                  defaultMessage: "Thumbs",
+                }),
+                icon: "mdi:view-grid",
+                selected: viewMode === "thumbs",
+                onClick: () => setViewMode("thumbs"),
+              },
+              {
+                label: t({
+                  id: "Search.view_mode.compact_thumbs",
+                  defaultMessage: "Compact Thumbs",
+                }),
+                icon: "mdi:view-grid-compact",
+                selected: viewMode === "compact_thumbs",
+                onClick: () => setViewMode("compact_thumbs"),
+              },
               {
                 type: "title",
                 label: t({
@@ -199,107 +250,31 @@ export const MaSearch = ({
               },
             ]}
             renderTrigger={triggerProps => (
-              <IconButton
-                size="x-small"
-                icon={
-                  !additionalOptions || additionalOptions.length === 0
-                    ? getEnqueModeIcon(enqueueMode)
-                    : "mdi:cog"
-                }
-                {...triggerProps}
-              />
-            )} 
+              <IconButton size="x-small" icon="mdi:dots-vertical" {...triggerProps} />
+            )}
           />
         </div>
-        {providerMenuItems && providerMenuItems.length > 1 && (
-          <div css={searchStyles.chipRow}>
-            <OverlayMenu
-              menuItems={providerMenuItems}
-              align="end"
-              side="bottom"
-              renderTrigger={triggerProps => (
-                <Chip
-                  icon="mdi:import"
-                  size="small"
-                  invertedColors
-                  border
-                  {...triggerProps}
-                >
-                  {providerLabel ?? maEntityId}
-                  <Icon icon="mdi:chevron-down" size="x-small" />
-                </Chip>
-              )}
-            />
-          </div>
-        )}
-        <div css={searchStyles.chipRow}>
-          <Chip
-            css={searchStyles.chip}
-            style={{
-              opacity: isFavoritesScope ? 1 : 0.6,
-              fontWeight: isFavoritesScope ? "bold" : "normal",
-            }}
-            icon="mdi:star"
-            onClick={() => setScope("favorites")}
-          >
-            {t({
-              id: "Search.scope.favorites",
-              defaultMessage: "Favorites",
-            })}
-          </Chip>
-          <Chip
-            css={searchStyles.chip}
-            style={{
-              opacity: isLibraryScope ? 1 : 0.6,
-              fontWeight: isLibraryScope ? "bold" : "normal",
-            }}
-            icon="mdi:folder-music"
-            onClick={() => setScope("library")}
-          >
-            {t({
-              id: "Search.scope.library",
-              defaultMessage: "Library",
-            })}
-          </Chip>
-          <Chip
-            css={searchStyles.chip}
-            style={{
-              opacity: isDiscoverScope ? 1 : 0.6,
-              fontWeight: isDiscoverScope ? "bold" : "normal",
-            }}
-            icon="mdi:database-search"
-            onClick={() => setScope("discover")}
-          >
-            {t({
-              id: "Search.scope.discover",
-              defaultMessage: "Discover",
-            })}
-          </Chip>
+        <div css={searchStyles.scrollingChipRow}>
+          {resolvedFilters.map(filter => (
+            <Chip
+              css={searchStyles.chip}
+              style={{
+                opacity: activeFilter === filter.type ? 1 : 0.6,
+                fontWeight: activeFilter === filter.type ? "bold" : "normal",
+              }}
+              key={filter.type}
+              onClick={() => setActiveFilter(filter.type)}
+              icon={filter.icon}
+            >
+              {t({
+                id: `Search.categories.${filter.label}`,
+                defaultMessage: filter.label,
+              })}
+            </Chip>
+          ))}
         </div>
-        {showModeText && <div css={searchStyles.modeText}>{modeText}</div>}
-        <div css={searchStyles.scrollingChipRow}>{renderFilterChips()}</div>
       </div>
     );
-  };
-
-  const renderFilterChips = () => {
-    return resolvedFilters.map(filter => (
-      <Chip
-        css={searchStyles.chip}
-        style={{
-          opacity: activeFilter === filter.type ? 1 : 0.6,
-          fontWeight: activeFilter === filter.type ? "bold" : "normal",
-        }}
-        key={filter.type}
-        onClick={() => setActiveFilter(filter.type)}
-        icon={filter.icon}
-      >
-        {t({
-          id: `Search.categories.${filter.label}`,
-          defaultMessage: filter.label,
-        })}
-      </Chip>
-    ));
   };
 
   return (
@@ -309,94 +284,48 @@ export const MaSearch = ({
         "--mmpc-search-padding": `${horizontalPadding}px`,
       }}
     >
-      <MaMediaItemsList
-        renderHeader={searchBarPosition === "top" ? renderSearchBar : undefined}
+      {searchBarPosition === "top" && renderSearchBar()}
+      <MaResultsView
         results={displayedResults}
+        activeFilter={activeFilter}
+        viewMode={viewMode}
+        thumbColumns={thumbColumns ?? 4}
+        compactThumbColumns={compactThumbColumns ?? 5}
         emptyText={emptyText}
+        canLoadMore={canLoadMore}
+        onLoadMore={handleLoadMore}
         onItemClick={item => playItem(item, maEntityId, enqueueMode)}
-        style={{
-          "--mmpc-search-padding": `${horizontalPadding}px`,
-        }}
-        maxHeight={maxHeight}
-        onHeaderClick={setActiveFilter}
-        onEndReached={canLoadMore ? handleLoadMore : undefined}
       />
       {searchBarPosition === "bottom" && renderSearchBar()}
     </div>
   );
 };
 
-const getDefaultLimit = (scope: MaSearchScope, filter: MaFilterType) => {
-  if (scope === "discover") {
+const getDefaultLimit = (filter: MaFilterType, searching: boolean) => {
+  if (searching) {
     return filter === "all" ? 12 : filter === "music" ? 36 : 100;
   }
   return filter === "all" ? 12 : filter === "music" ? 24 : 100;
 };
 
-const getLoadMoreStep = (scope: MaSearchScope, filter: MaFilterType) => {
-  if (scope === "discover") {
+const getLoadMoreStep = (filter: MaFilterType, searching: boolean) => {
+  if (searching) {
     return filter === "all" ? 12 : filter === "music" ? 24 : 50;
   }
   return filter === "all" ? 8 : filter === "music" ? 16 : 50;
 };
 
-const getModeText = ({
-  normalizedQuery,
-  scope,
-  t,
-}: {
-  normalizedQuery: string;
-  scope: MaSearchScope;
-  t: ReturnType<typeof useIntl>["t"];
-}) => {
-  if (normalizedQuery === "") {
-    if (scope === "favorites") {
-      return t({
-        id: "Search.mode.showing_favorites",
-        defaultMessage: "Showing favorites",
-      });
-    }
-    if (scope === "library") {
-      return t({
-        id: "Search.mode.showing_library",
-        defaultMessage: "Showing library",
-      });
-    }
-    return t({
-      id: "Search.mode.type_to_discover_sources",
-      defaultMessage: "Type to discover across all sources.",
-    });
-  }
-
-  if (scope === "favorites") {
-    return t({
-      id: "Search.mode.showing_favorite_results",
-      defaultMessage: "Showing favorite results",
-    });
-  }
-  if (scope === "library") {
-    return t({
-      id: "Search.mode.showing_library_results",
-      defaultMessage: "Showing library results",
-    });
-  }
-  return t({
-    id: "Search.mode.showing_discovery_results",
-    defaultMessage: "Showing discovery results",
-  });
-};
-
 const getEnqueModeIcon = (enqueueMode: MaEnqueueMode) => {
   switch (enqueueMode) {
-    case "play": // Play now
+    case "play":
       return "mdi:play-circle";
-    case "replace": // Replace the existing queue and play now
+    case "replace":
       return "mdi:playlist-remove";
-    case "next": // Add to the current queue after the currently playing item
+    case "next":
       return "mdi:playlist-play";
-    case "replace_next": // Replace the current queue after the currently playing item
+    case "replace_next":
       return "mdi:playlist-edit";
-    case "add": // Add to the end of the queue
+    case "add":
       return "mdi:playlist-plus";
     default:
       return "mdi:play-circle";
