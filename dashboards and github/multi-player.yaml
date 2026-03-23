@@ -1,13 +1,31 @@
+kiosk_mode:
+  non_admin_settings:
+    hide_sidebar: true
+    hide_header: true
 views:
   - type: custom:vertical-layout
     cards:
       - type: custom:mediocre-multi-media-player-card
         entity_id: media_player.ma_basement_sonos
-        ma_entity_id: media_player.ma_basement_sonos
-        ma_favorite_button_entity_id: button.ma_basement_favorite_current_song
-        tap_opens_popup: true
         mode: card
         size: large
+        tap_opens_popup: true
+        use_art_colors: true
+        options:
+          hide_mini_player_on_secondary_views: true
+          player_is_active_when: playing_or_paused
+          player_view_icon: mdi:play
+          volume_trailing_button: group_volume
+        ma_entity_id: media_player.ma_basement_sonos
+        ma_favorite_button_entity_id: button.ma_basement_favorite_current_song
+        ma_favorite_control:
+          active_icon: mdi:star
+          inactive_icon: mdi:star-outline
+          active_color: "#f2c94c"
+          show_on_artwork: true
+          artwork_button_size: medium
+          artwork_inset_top: "5%"
+          artwork_inset_right: "6%"
         media_browser:
           enabled: true
           media_types:
@@ -18,7 +36,9 @@ views:
             - media_type: radios
         media_players:
           - entity_id: media_player.ma_basement_sonos
+            can_be_grouped: true
             ma_entity_id: media_player.ma_basement_sonos
+            ma_favorite_button_entity_id: button.ma_basement_favorite_current_song
             search:
               - entity_id: media_player.ma_basement_sonos
                 name: MA Basement Sonos
@@ -26,17 +46,16 @@ views:
                   - media_type: playlists
                     name: Playlists
                     icon: mdi:playlist-music
-                  - media_type: artists
-                    name: Artists
-                    icon: mdi:account-music
+                  
                   - media_type: albums
                     name: Albums
                     icon: mdi:album
                   - media_type: tracks
                     name: Tracks
                     icon: mdi:music-note
-            can_be_grouped: true
-            ma_favorite_button_entity_id: button.ma_basement_favorite_current_song
+                  - media_type: artists
+                    name: Artists
+                    icon: mdi:account-music
             volume_panel:
               show_when: always
               entities:
@@ -47,23 +66,10 @@ views:
                   show_power: true
           - entity_id: media_player.ma_dining_sl
             can_be_grouped: true
-            search: []
             media_browser: []
+            search: []
             volume_panel:
               show_when: always
               entities:
                 - entity_id: media_player.ma_dining_sl
                   name: Dining
-        use_art_colors: true
-        options:
-          player_is_active_when: playing_or_paused
-          player_view_icon: mdi:play
-          volume_trailing_button: group_volume
-        ma_favorite_control:
-          show_on_artwork: true
-          artwork_button_size: medium
-          artwork_inset_top: 5%
-          artwork_inset_right: 6%
-          active_icon: mdi:star
-          inactive_icon: mdi:star-outline
-          active_color: '#f2c94c'

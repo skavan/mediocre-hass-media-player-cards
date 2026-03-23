@@ -8,6 +8,7 @@ export const filters: MaFilterConfig[] = [
   { type: "track", label: "Tracks", icon: "mdi:music-note" },
   { type: "playlist", label: "Playlists", icon: "mdi:playlist-music" },
   { type: "radio", label: "Radio", icon: "mdi:radio" },
+  { type: "genre", label: "Genres", icon: "mdi:tag-multiple" },
   { type: "audiobook", label: "Audiobooks", icon: "mdi:book" },
   { type: "podcast", label: "Podcasts", icon: "mdi:podcast" },
 ];
@@ -29,6 +30,8 @@ const filterAliases: Record<
   artists: { type: "artist", label: "Artists", icon: "mdi:account-music" },
   audiobook: { type: "audiobook", label: "Audiobooks", icon: "mdi:book" },
   audiobooks: { type: "audiobook", label: "Audiobooks", icon: "mdi:book" },
+  genre: { type: "genre", label: "Genres", icon: "mdi:tag-multiple" },
+  genres: { type: "genre", label: "Genres", icon: "mdi:tag-multiple" },
   music: { type: "music", label: "Music", icon: "mdi:music" },
   playlist: { type: "playlist", label: "Playlists", icon: "mdi:playlist-music" },
   playlists: { type: "playlist", label: "Playlists", icon: "mdi:playlist-music" },
@@ -77,6 +80,7 @@ export const responseKeyMediaTypeMap: { [key: string]: MaMediaType } = {
   tracks: "track",
   playlists: "playlist",
   radio: "radio",
+  genres: "genre",
   audiobooks: "audiobook",
   podcasts: "podcast",
 };
@@ -87,6 +91,7 @@ export const labelMap: { [key in MaMediaType]: string } = {
   track: "Tracks",
   playlist: "Playlists",
   radio: "Radio",
+  genre: "Genres",
   audiobook: "Audiobooks",
   podcast: "Podcasts",
 };

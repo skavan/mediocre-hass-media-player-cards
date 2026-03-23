@@ -27,6 +27,7 @@ export type MaMediaItemsListProps = Omit<
   loading?: boolean;
   error?: string | null;
   results?: MaSearchResponse;
+  emptyText?: string;
 };
 
 type MaMediaListItem =
@@ -49,6 +50,7 @@ export const MaMediaItemsList = ({
   loading = false,
   error = null,
   results,
+  emptyText,
   ...listProps
 }: MaMediaItemsListProps) => {
   const { t } = useIntl();
@@ -219,10 +221,11 @@ export const MaMediaItemsList = ({
       renderItem={renderItem}
       renderEmpty={() => (
         <p css={searchStyles.mediaEmptyText}>
-          {t({
-            id: "Search.no_results",
-            defaultMessage: "No results found.",
-          })}
+          {emptyText ??
+            t({
+              id: "Search.no_results",
+              defaultMessage: "No results found.",
+            })}
         </p>
       )}
       {...listProps}

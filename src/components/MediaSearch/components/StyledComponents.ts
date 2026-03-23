@@ -15,27 +15,40 @@ export const searchStyles = {
     display: "flex",
     flexDirection: "column",
     gap: 12,
-    marginBottom: 12,
+    marginBottom: 8,
   }),
-  filterContainer: css({
+  chipRow: css({
     display: "flex",
     flexDirection: "row",
-    gap: "2px",
+    gap: "6px",
+    justifyContent: "flex-start",
+    padding: "0px var(--mmpc-search-padding, 0px)",
+  }),
+  scrollingChipRow: css({
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "nowrap",
+    gap: "6px",
     justifyContent: "flex-start",
     overflowX: "auto",
-    scrollbarWidth: "none",
-    "-ms-overflow-style": "none",
+    overflowY: "hidden",
+    padding: "0px var(--mmpc-search-padding, 0px) 4px",
+    WebkitOverflowScrolling: "touch",
+    scrollbarWidth: "thin",
+    scrollbarColor: "var(--divider-color) transparent",
     "&::-webkit-scrollbar": {
-      display: "none",
+      height: "6px",
+    },
+    "&::-webkit-scrollbar-track": {
+      background: "transparent",
+    },
+    "&::-webkit-scrollbar-thumb": {
+      background: "var(--divider-color)",
+      borderRadius: "999px",
     },
   }),
   chip: css({
-    "&:first-child": {
-      marginLeft: "var(--mmpc-chip-horizontal-margin, 0px)",
-    },
-    "&:last-child": {
-      marginRight: "var(--mmpc-chip-horizontal-margin, 0px)",
-    },
+    flexShrink: 0,
   }),
   verticalChipSeperator: css({
     height: "28px",

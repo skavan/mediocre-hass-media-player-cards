@@ -5,6 +5,7 @@ export type MaMediaType =
   | "track"
   | "playlist"
   | "radio"
+  | "genre"
   | "audiobook"
   | "podcast";
 
@@ -63,6 +64,10 @@ export interface MaRadio extends MaMediaItem {
   media_type: "radio";
 }
 
+export interface MaGenre extends MaMediaItem {
+  media_type: "genre";
+}
+
 export interface MaPodcast extends MaMediaItem {
   media_type: "podcast";
 }
@@ -78,6 +83,7 @@ export interface MaSearchResponse {
   tracks: MaTrack[];
   playlists: MaPlaylist[];
   radio: MaRadio[];
+  genres: MaGenre[];
   audiobooks: MaAudiobook[];
   podcasts: MaPodcast[];
 }

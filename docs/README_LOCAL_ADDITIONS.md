@@ -2,31 +2,34 @@
 
 This document captures the local additions made in this repo during this round of changes.
 
+It focuses on user-facing YAML, runtime behavior, and the current limitations of those additions.
+
 It covers:
 
 - Home Assistant media browser root filtering
 - root-level multi-card inheritance for `media_browser`
-- configurable large-card player tab icon
+- configurable large-card footer icons and footer behavior
 - configurable large-card trailing volume button
 - native grouped volume panel
 - optional hiding of the large-card mini player on secondary views
 - reusable Music Assistant favorite control
 - Music Assistant artwork favorite overlay
-- Music Assistant search filter configuration and favorites
+- Music Assistant library, favorites, and discovery views
+- Home Assistant browser/search behavior vs Music Assistant behavior
 - local build helpers for Home Assistant deployment
 
-## 1. Media Browser Root Filtering
+## 1. Home Assistant Media Browser Root Filtering
 
-The Home Assistant media browser now supports an optional root-level category allowlist.
+The Home Assistant-backed media browser now supports an optional root-level category allowlist.
 
 Behavior:
 
 - applies only to the first/root Browse Media screen
 - if `media_types` is omitted, all root categories are shown
 - if `media_types` is present, only those root categories are shown
-- categories are shown in the same order as configured
+- configured categories are shown in the same order as YAML
 - `name` and `icon` can override the displayed root tile
-- this view is driven by Home Assistant `media_player/browse_media`, not by Music Assistant library search
+- this path is still driven by Home Assistant `media_player/browse_media`, not by Music Assistant library APIs
 
 Supported root types:
 
@@ -77,9 +80,11 @@ media_players:
     media_browser: []
 ```
 
-## 3. Large Card Player View Icon
+## 3. Large Card Footer Options
 
-The first footer/tab icon on the large player can now be customized.
+The large-card footer now supports several additional options.
+
+### Player view icon
 
 Option:
 
@@ -96,9 +101,7 @@ options:
   player_view_icon: mdi:play
 ```
 
-## 4. Large Card Media Browser Icon
-
-The media browser footer/tab icon on the large player can now be customized.
+### Media browser view icon
 
 Option:
 
@@ -115,13 +118,13 @@ options:
   media_browser_view_icon: mdi:folder-star
 ```
 
-## 5. Footer More-Actions Button
+### Footer more-actions (`...`) behavior
 
 The large footer `...` button now behaves like this:
 
 - by default it only shows when multiple `custom_buttons` are defined
 - if exactly one `custom_button` is defined, that button is shown directly
-- it no longer appears just because a player has MA features
+- it no longer appears just because a player has MA-specific features
 - you can force it to show for access to the additional-actions view
 
 Option:
@@ -135,7 +138,7 @@ options:
   always_show_footer_more_actions: true
 ```
 
-## 6. Large Card Mini Player on Secondary Views
+### Hide mini player on secondary views
 
 The large card can optionally hide the mini player shown below non-home views such as:
 
@@ -156,9 +159,9 @@ options:
   hide_mini_player_on_secondary_views: true
 ```
 
-## 7. Large Card Volume Trailing Button
+## 4. Large Card Volume Trailing Button
 
-The large player view now supports a configurable button to the right of the volume slider.
+The large player view supports a configurable button to the right of the volume slider.
 
 Option:
 
@@ -202,9 +205,9 @@ media_players:
           entity_id: button.ma_basement_favorite_current_song
 ```
 
-### Built-in grouped volume trailing button
+### Built-in grouped-volume trailing button
 
-To open the native grouped volume panel from the trailing volume-row button instead of from a custom button:
+To open the native grouped-volume panel from the trailing volume-row button:
 
 ```yaml
 options:
@@ -214,15 +217,15 @@ options:
 Behavior:
 
 - uses a built-in `mdi:volume-source` button on the right side of the large volume row
-- opens the same native grouped volume panel as the custom `mmpc-action`
+- opens the same native grouped-volume panel as the custom `mmpc-action`
 - keeps the custom-button launch path available for other placements
 - hides itself unless the panel is relevant for the selected player
 
-## 8. Native Grouped Volume Panel
+## 5. Native Grouped Volume Panel
 
-The large card now supports a native grouped volume panel.
+The large card now supports a native grouped-volume panel.
 
-This uses the same shared `VolumeSlider` component as the card's built-in volume row.
+It reuses the same shared `VolumeSlider` behavior as the card's built-in volume row.
 
 It can be opened from:
 
@@ -274,38 +277,35 @@ Example:
 ```yaml
 media_players:
   - entity_id: media_player.ma_basement_sonos
-    custom_buttons:
-      - icon: mdi:volume-source
-        name: Volumes
-        tap_action:
-          action: mmpc-action
-          mmpc_action: open-volume-panel
     volume_panel:
-      show_when: grouped
+      show_when: always
       entities:
         - entity_id: media_player.ma_basement_sonos
           name: Sonos
-        - entity_id: media_player.basement_receiver
+        - entity_id: media_player.sc_lx704
           name: Receiver
           show_power: true
-        - entity_id: media_player.zone2_aux
-          name: Auxiliary Speakers
-          show_power: true
+  - entity_id: media_player.ma_dining_sl
+    volume_panel:
+      show_when: always
+      entities:
+        - entity_id: media_player.ma_dining_sl
+          name: Dining
 ```
 
 Behavior:
 
-- the panel is available in the large card only
+- the panel is available in the large-card view
 - when `show_when` is `grouped`, the panel shows an explanatory message until the selected player is grouped
-- the selected player becomes the first section
-- any other currently grouped players are appended after it
+- the selected player is shown first
+- other currently grouped players are appended after it
 - each grouped player contributes its own `volume_panel.entities` section
-- rows use the native slider behavior already used elsewhere in the card
-- each endpoint row shows the configured display name and the current volume percentage
-- power buttons are optional per row
 - if a grouped player has no `volume_panel` config, it falls back to a single row for that player's main media entity
+- each endpoint row shows the configured display name and the current volume percentage
+- rows use the native slider behavior already used elsewhere in the card
+- power buttons are optional per row
 
-## 9. Music Assistant Favorite Control
+## 6. Music Assistant Favorite Control
 
 A reusable Music Assistant favorite control is now available.
 
@@ -336,7 +336,8 @@ The selected player should provide:
 - favorite state is read from `music_assistant.get_queue`
 - add favorite uses the configured `ma_favorite_button_entity_id`
 - remove favorite uses `mass_queue.unfavorite_current_item`
-- provider-backed items may report favorite state but currently cannot always be unfavorited through this path
+- provider-backed items may report favorite state but cannot always be unfavorited through this path
+- `options.volume_trailing_button: ma_favorite` reuses the same MA favorite runtime
 
 Example:
 
@@ -347,7 +348,7 @@ ma_favorite_control:
   active_color: "#f2c94c"
 ```
 
-## 10. Artwork Favorite Overlay
+## 7. Artwork Favorite Overlay
 
 The Music Assistant favorite control can be shown on the main artwork.
 
@@ -370,34 +371,61 @@ Inset values:
 
 - any valid CSS length or inset value such as `14px`, `1rem`, `5%`, or `calc(1rem + 4px)`
 
+Behavior:
+
+- the inactive overlay uses a translucent neutral background for contrast on light or dark artwork
+- the active overlay uses a darker background so the active color stands out more clearly
+- the overlay is inset from the artwork edge rather than sitting flush against the corner
+
 Example:
 
 ```yaml
 ma_favorite_control:
   show_on_artwork: true
   artwork_button_size: medium
-  artwork_inset_top: "2%"
-  artwork_inset_right: "8%"
+  artwork_inset_top: "5%"
+  artwork_inset_right: "6%"
   active_icon: mdi:star
   inactive_icon: mdi:star-outline
   active_color: "#f2c94c"
 ```
 
-## 11. Music Assistant Search Configuration
+## 8. Music Assistant Library, Favorites, and Discover
 
-If a search entry targets the player's `ma_entity_id`, it is now treated as a configurable Music Assistant search provider.
+If a search entry targets the player's `ma_entity_id`, it is treated as a configurable Music Assistant search provider.
 
-This allows the existing `search.media_types` YAML shape to drive `MaSearch`.
+If a media browser entry targets the player's `ma_entity_id`, the large-card Browse Media tab uses a Music Assistant library view instead of the Home Assistant `browse_media` tree.
 
-Behavior:
+This allows the existing `search.media_types` and `media_browser.media_types` YAML shapes to drive the Music Assistant views.
 
-- Music Assistant favorites are shown when the query is blank
-- typed queries use `music_assistant.search`
-- blank queries use `music_assistant.get_library` with `favorite: true`
-- if a configured search entry already targets `ma_entity_id`, the synthetic duplicate MA provider is not added
-- the current UI does not explicitly label the blank state as `Favorites` or the typed state as `Results`; the switch happens implicitly when the query becomes non-empty
+### Blank-query modes
 
-### Supported `media_type` aliases for MA search
+Blank query supports three MA modes:
+
+- `Favorites`
+- `Library`
+- `Discover`
+
+Defaults:
+
+- MA Search defaults to `Favorites`
+- MA Browse Media defaults to `Library`
+
+Query behavior:
+
+- `Favorites` uses `music_assistant.get_library` with `favorite: true`
+- `Library` uses `music_assistant.get_library`
+- `Discover` is provider-wide and uses `music_assistant.search` once you type
+
+Typed query behavior:
+
+- typed `Favorites` searches favorites only
+- typed `Library` searches MA library only
+- typed `Discover` searches across MA-connected providers and sources
+
+### Configurable MA media types
+
+Supported `media_type` aliases for MA search and MA library views:
 
 - `all`
 - `music`
@@ -411,6 +439,8 @@ Behavior:
 - `playlists`
 - `radio`
 - `radios`
+- `genre`
+- `genres`
 - `audiobook`
 - `audiobooks`
 - `podcast`
@@ -428,34 +458,71 @@ search:
   - entity_id: media_player.ma_basement_sonos
     name: MA Basement Sonos
     media_types:
-      - media_type: music
-        name: Music
-        icon: mdi:music
-      - media_type: playlist
+      - media_type: playlists
         name: Playlists
         icon: mdi:playlist-music
+      - media_type: artists
+        name: Artists
+        icon: mdi:account-music
+      - media_type: albums
+        name: Albums
+        icon: mdi:album
+      - media_type: tracks
+        name: Tracks
+        icon: mdi:music-note
 ```
 
 With the example above:
 
-- `All` shows all MA favorites
-- `Music` shows favorite artists, albums, and tracks
-- `Playlists` shows favorite playlists
-- typed search under `Music` searches artist, album, and track in MA
+- `All` is still prepended automatically
+- in `Favorites` mode, `All` shows all MA favorites
+- in `Library` mode, `All` shows MA library items
+- in `Discover` mode, you type to search across MA-connected providers
+- blank `Discover` shows a prompt to type rather than a results grid
 
-## 12. Home Assistant Search and Browser Behavior
+### MA search and browse UI behavior
 
-The Home Assistant-backed paths are separate from the Music Assistant-backed search path.
+The current MA search/library UI behaves like this:
+
+- blank `Favorites` shows favorite items
+- blank `Library` shows library items
+- blank `Discover` prompts you to type
+- results progressively load more items as you scroll
+- the search input shows a clear `x` when text is present
+- when text is present, the clear `x` takes precedence over the spinner
+- the mode/helper text above results is hidden by default and is only rendered when a caller explicitly opts in
+- the media-type chips (`All`, `Artists`, `Albums`, etc.) are a single horizontal strip rather than a wrapped grid
+- that strip is swipe-scrollable on touch devices and uses a thin horizontal scrollbar when needed
+
+### Missing-artwork placeholders
+
+When a Music Assistant item has no artwork:
+
+- a shared placeholder helper now generates initials from the item name
+- the UI shows a neutral grey tile with initials instead of a broken or empty image
+
+This behavior is shared across MA media result tiles.
+
+### MA provider de-duplication
+
+If a configured search entry already targets `ma_entity_id`, the synthetic duplicate MA provider is not added.
+
+That avoids the previous collision where HA and MA providers with the same entity could appear to be separate while actually resolving to the same MA path.
+
+## 9. Home Assistant Search and Browser Behavior
+
+The Home Assistant-backed paths are separate from the Music Assistant-backed search/library path.
 
 ### HA Browser
 
-The standard `Browse Media` view uses Home Assistant `media_player/browse_media` on the selected entity.
+The standard Home Assistant-backed `Browse Media` view uses Home Assistant `media_player/browse_media` on the selected entity.
 
 That means:
 
 - it shows whatever that specific media player entity exposes through HA browsing
 - it is not the same thing as Music Assistant library search
 - a track existing in the MA library does not guarantee it will appear in the HA browser tree
+- if the selected media browser entry is MA-backed, the card now uses the MA library view instead of this HA browse path
 
 ### HA Search
 
@@ -464,10 +531,11 @@ The Home Assistant search path behaves like this:
 - blank query uses Home Assistant `media_player/browse_media`
 - typed query uses Home Assistant `media_player/search_media`
 - empty-query browse results are filtered to `can_play` items in the current implementation
+- the search input includes the same clear `x` behavior as the MA input
 
-So if you are using a Music Assistant player and you want clear library favorites plus full MA search behavior, the MA search path is the more reliable one.
+So if you want reliable Music Assistant favorites, library items, and provider-wide discovery, the MA path is the authoritative one.
 
-## 13. Build Helpers
+## 10. Build Helpers
 
 Added package scripts:
 
@@ -485,13 +553,15 @@ This produces:
 - `dist/mediocre-hass-media-player-cards.js`
 - `dist/mediocre-hass-media-player-cards.js.gz`
 
-## 14. Combined Example
+## 11. Combined Example
 
 ```yaml
 type: custom:mediocre-multi-media-player-card
 entity_id: media_player.ma_basement_sonos
-size: large
+ma_entity_id: media_player.ma_basement_sonos
+ma_favorite_button_entity_id: button.ma_basement_favorite_current_song
 mode: card
+size: large
 use_art_colors: true
 
 media_browser:
@@ -504,17 +574,18 @@ media_browser:
     - media_type: radios
 
 options:
+  player_is_active_when: playing_or_paused
+  player_view_icon: mdi:play
+  media_browser_view_icon: mdi:folder-star
+  volume_trailing_button: group_volume
   always_show_footer_more_actions: true
   hide_mini_player_on_secondary_views: true
-  media_browser_view_icon: mdi:folder-star
-  player_view_icon: mdi:play
-  volume_trailing_button: group_volume
 
 ma_favorite_control:
   show_on_artwork: true
   artwork_button_size: medium
-  artwork_inset_top: "2%"
-  artwork_inset_right: "8%"
+  artwork_inset_top: "5%"
+  artwork_inset_right: "6%"
   active_icon: mdi:star
   inactive_icon: mdi:star-outline
   active_color: "#f2c94c"
@@ -523,40 +594,50 @@ media_players:
   - entity_id: media_player.ma_basement_sonos
     ma_entity_id: media_player.ma_basement_sonos
     ma_favorite_button_entity_id: button.ma_basement_favorite_current_song
+    can_be_grouped: true
+    search:
+      - entity_id: media_player.ma_basement_sonos
+        name: MA Basement Sonos
+        media_types:
+          - media_type: playlists
+            name: Playlists
+            icon: mdi:playlist-music
+          - media_type: artists
+            name: Artists
+            icon: mdi:account-music
+          - media_type: albums
+            name: Albums
+            icon: mdi:album
+          - media_type: tracks
+            name: Tracks
+            icon: mdi:music-note
     volume_panel:
       show_when: always
       entities:
         - entity_id: media_player.ma_basement_sonos
           name: Sonos
-        - entity_id: media_player.basement_receiver
+        - entity_id: media_player.sc_lx704
           name: Receiver
           show_power: true
-    search:
-      - entity_id: media_player.ma_basement_sonos
-        name: MA Basement Sonos
-        media_types:
-          - media_type: music
-            name: Music
-            icon: mdi:music
-          - media_type: playlist
-            name: Playlists
-            icon: mdi:playlist-music
+
   - entity_id: media_player.ma_dining_sl
+    can_be_grouped: true
+    media_browser: []
+    search: []
     volume_panel:
       show_when: always
       entities:
         - entity_id: media_player.ma_dining_sl
           name: Dining
-    media_browser: []
-    search: []
 ```
 
-## 15. Current Limitations
+## 12. Current Limitations
 
 - Home Assistant media browser root filtering only affects the first/root Browse Media screen
-- the native grouped volume panel currently opens only in the large-card view
+- the native grouped-volume panel currently opens in the large-card view
 - Music Assistant unfavorite currently depends on `mass_queue.unfavorite_current_item`, which is limited for some provider-backed items
-- Music Assistant search favorites are exposed through the search view, not the media browser
-- the MA search UI still switches from favorites to typed search results implicitly rather than labeling that mode change
+- the MA library view is currently a flat library/search page, not a deep drill-down browser such as `Artist -> Albums -> Tracks`
+- MA `Discover` still relies on repeated larger searches rather than true offset-based paging
 - the HA browser/search paths only reflect what the selected HA media player exposes through `browse_media` / `search_media`
-- the forced `All` MA search chip still shows all MA favorite categories, not only the configured subset
+- the forced `All` MA chip is broader than the configured subset and is still prepended automatically
+- some MA media types may not be available on every backend or HA integration version; unsupported categories now fail soft instead of breaking the whole `All` view

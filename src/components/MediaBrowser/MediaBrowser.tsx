@@ -1,5 +1,6 @@
 import { HaMediaBrowser } from "@components/HaMediaBrowser";
 import { LyrionMediaBrowser } from "@components/LyrionMediaBrowser";
+import { MaSearch } from "@components/MaSearch";
 import { OverlayMenuItem } from "@components/OverlayMenu/OverlayMenu";
 import { MediaBrowserEntry } from "@types";
 import { getCanDisplayLyrionMediaBrowser } from "@utils";
@@ -9,6 +10,7 @@ export type MediaBrowserProps = {
   mediaBrowserEntryArray: MediaBrowserEntry[];
   horizontalPadding?: number;
   maxHeight?: number;
+  maEntityId?: string | null;
   lmsEntityId?: string | null;
   useExperimentalLmsMediaBrowser?: boolean;
   renderHeader?: () => preact.JSX.Element;
@@ -16,6 +18,7 @@ export type MediaBrowserProps = {
 
 export const MediaBrowser: FC<MediaBrowserProps> = ({
   mediaBrowserEntryArray,
+  maEntityId,
   lmsEntityId,
   horizontalPadding,
   maxHeight,
@@ -42,6 +45,7 @@ export const MediaBrowser: FC<MediaBrowserProps> = ({
   }, [mediaBrowserEntryArray, selectedMediaBrowser.entity_id]);
 
   const isLyrionEntity = selectedMediaBrowser.entity_id === lmsEntityId;
+  const isMusicAssistantEntity = selectedMediaBrowser.entity_id === maEntityId;
   const canDisplayLyrionMediaBrowser =
     useExperimentalLmsMediaBrowser && getCanDisplayLyrionMediaBrowser();
 
@@ -56,6 +60,24 @@ export const MediaBrowser: FC<MediaBrowserProps> = ({
             ? selectMediaBrowserMenuItems
             : undefined
         }
+        horizontalPadding={horizontalPadding}
+        maxHeight={maxHeight}
+        renderHeader={renderHeader}
+      />
+    );
+  }
+  if (isMusicAssistantEntity && maEntityId) {
+    return (
+      <MaSearch
+        maEntityId={maEntityId}
+        filterConfig={selectedMediaBrowser.media_types}
+        providerLabel={selectedMediaBrowser.name ?? selectedMediaBrowser.entity_id}
+        providerMenuItems={
+          selectMediaBrowserMenuItems.length > 1
+            ? selectMediaBrowserMenuItems
+            : undefined
+        }
+        defaultScope="library"
         horizontalPadding={horizontalPadding}
         maxHeight={maxHeight}
         renderHeader={renderHeader}
