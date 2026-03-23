@@ -159,6 +159,35 @@ options:
   hide_mini_player_on_secondary_views: true
 ```
 
+### Secondary-view mini player mode
+
+The large card can also switch the mini player shown below non-home views between the current embedded-card layout and a denser compact layout.
+
+Option:
+
+- `options.secondary_view_mini_player_mode`
+
+Supported values:
+
+- `default`
+- `compact`
+- `hidden`
+
+Behavior:
+
+- `default` preserves the existing embedded mini player
+- `compact` uses a denser Mushroom-like two-line layout with artwork, truncation, compact transport buttons, and a final volume or power action button
+- the compact layout uses a rounded artwork tile and tighter spacing than the embedded mini player
+- `hidden` suppresses the secondary-view mini player
+- `hide_mini_player_on_secondary_views: true` still takes precedence and hides it completely
+
+Example:
+
+```yaml
+options:
+  secondary_view_mini_player_mode: compact
+```
+
 ### MA Search and Library density / title options
 
 The large card now also supports MA-specific options for the Search and Browse Media surfaces.
@@ -183,8 +212,8 @@ Behavior:
 
 Defaults:
 
-- Search `thumbs`: `3`
-- Search `compact thumbs`: `4`
+- Search `thumbs`: `4`
+- Search `compact thumbs`: `5`
 - Library root tiles: `4`
 - Library `thumbs`: `4`
 - Library `compact thumbs`: `5`
@@ -194,8 +223,8 @@ Example:
 ```yaml
 options:
   search_view_title: Global Search
-  ma_search_thumbs_columns: 3
-  ma_search_compact_thumbs_columns: 4
+  ma_search_thumbs_columns: 4
+  ma_search_compact_thumbs_columns: 5
   ma_library_root_columns: 4
   ma_library_thumbs_columns: 4
   ma_library_compact_thumbs_columns: 5
@@ -461,8 +490,8 @@ Behavior:
 View density defaults:
 
 - `list`: row list
-- `thumbs`: `3` columns by default
-- `compact thumbs`: `4` columns by default
+- `thumbs`: `4` columns by default
+- `compact thumbs`: `5` columns by default
 
 The blank-query favorites toggle uses Music Assistant library data with `favorite: true`.
 
@@ -555,8 +584,10 @@ The current MA search/library UI behaves like this:
 - Global Search uses category chips only; it no longer has the old scope row
 - Global Search has a vertical-dots menu for favorites-only, view mode, and enqueue controls
 - Global Search remembers the selected view mode independently per category
+- the favorites-only state is shown inline in the toolbar area instead of taking a full extra row
 - Browse Media uses category tiles at the root and a breadcrumbed category page after selection
 - Browse Media remembers the selected view mode independently per category page
+- Browse Media also shows the favorites-only state inline in the toolbar area
 - Search and Library both support:
   - `list`
   - `thumbs`
@@ -651,14 +682,14 @@ options:
   player_view_icon: mdi:play
   media_browser_view_icon: mdi:folder-star
   search_view_title: Global Search
-  ma_search_thumbs_columns: 3
-  ma_search_compact_thumbs_columns: 4
+  ma_search_thumbs_columns: 4
+  ma_search_compact_thumbs_columns: 5
   ma_library_root_columns: 4
   ma_library_thumbs_columns: 4
   ma_library_compact_thumbs_columns: 5
   volume_trailing_button: group_volume
   always_show_footer_more_actions: true
-  hide_mini_player_on_secondary_views: true
+  secondary_view_mini_player_mode: compact
 
 ma_favorite_control:
   show_on_artwork: true
